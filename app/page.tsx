@@ -408,7 +408,7 @@ function Nav() {
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          {['Problem', 'Solution', 'Demo', 'Docs'].map(s => (
+          {['Evidence', 'Problem', 'Solution', 'Demo', 'Docs'].map(s => (
             <a key={s} href={`#${s.toLowerCase()}`} style={{ fontSize: 13, color: '#888', fontWeight: 500, transition: 'color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
               onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
@@ -490,8 +490,81 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── EVIDENCE: REAL DISASTERS ── */}
+      <Section id="evidence" dark>
+        <SectionTitle
+          eyebrow="The Evidence"
+          title="This isn't theoretical. It keeps happening."
+          subtitle="Every major post-incident review identifies the same bottleneck: multi-agency coordination and legal authorization — not detection."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+          {[
+            {
+              name: 'Hurricane Katrina',
+              year: '2005',
+              delay: '37 days',
+              detail: 'FEMA, state, and Red Cross operated in parallel without coordination. Meals took 37 days to reach some areas. The 9/11 Commission-style review found "the single most important failure was coordination."',
+              source: 'Select Bipartisan Committee Report, 2006',
+              color: '#ef4444',
+            },
+            {
+              name: 'Fukushima Daiichi',
+              year: '2011',
+              delay: '7+ hours',
+              detail: 'Reactor venting was delayed 7+ hours while operators, TEPCO management, and the Prime Minister\'s office argued over authorization. Evacuation was uncoordinated across jurisdictions.',
+              source: 'NAIIC Report to the Japanese Diet, 2012',
+              color: '#f59e0b',
+            },
+            {
+              name: 'UK Summer Floods',
+              year: '2007',
+              delay: '3–5 hours',
+              detail: 'Cross-government coordination took 3–5 hours per decision. The Pitt Review recommended "a single framework for multi-agency response" — which still doesn\'t exist.',
+              source: 'The Pitt Review, Cabinet Office, 2008',
+              color: '#3b82f6',
+            },
+            {
+              name: 'Storm Desmond (Carlisle)',
+              year: '2015',
+              delay: '2–6 hours',
+              detail: 'Power substation flooded → water pumps failed → treatment offline → hospitals on emergency supply. Each agency responded independently. Cross-sector cascade was not predicted.',
+              source: 'Environment Agency Post-Incident Review, 2016',
+              color: '#22c55e',
+            },
+          ].map(d => (
+            <div key={d.name} style={{
+              padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div>
+                  <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>{d.name}</span>
+                  <span style={{ fontSize: 13, color: '#666', marginLeft: 8 }}>{d.year}</span>
+                </div>
+                <span style={{
+                  fontSize: 13, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: d.color,
+                  padding: '2px 8px', borderRadius: 4, background: d.color + '15',
+                }}>
+                  {d.delay} delay
+                </span>
+              </div>
+              <p style={{ fontSize: 13, color: '#a3a3a3', lineHeight: 1.6, marginBottom: 12 }}>{d.detail}</p>
+              <div style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>{d.source}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{
+          textAlign: 'center', padding: '20px 24px', borderRadius: 8,
+          background: '#111', border: '1px solid #1a1a1a',
+        }}>
+          <p style={{ fontSize: 15, color: '#d4d4d4', marginBottom: 4 }}>
+            The common thread in every case: <strong style={{ color: '#fff' }}>the technology to detect the problem existed.
+            The authority to act did not arrive in time.</strong>
+          </p>
+        </div>
+      </Section>
+
       {/* ── THE PROBLEM ── */}
-      <Section id="problem" dark>
+      <Section id="problem">
         <SectionTitle
           eyebrow="The Problem"
           title="The cascade consumes entire sectors before anyone is allowed to act"
@@ -739,6 +812,77 @@ export default function Home() {
               ))}
             </div>
           ))}
+        </div>
+      </Section>
+
+      {/* ── MARKET & TIMING ── */}
+      <Section id="market">
+        <SectionTitle
+          eyebrow="Why Now"
+          title="Three forces converging"
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 40 }}>
+          {[
+            {
+              title: 'EU CER Directive',
+              date: 'July 2026',
+              desc: '27 EU member states must identify critical entities and implement cross-sector risk assessment. Compliance "will need to be technology enabled."',
+              color: '#3b82f6',
+            },
+            {
+              title: 'Post-quantum deadline',
+              date: 'NIST 2024',
+              desc: 'NIST standardized ML-DSA. Critical infrastructure commands signed today need quantum-safe signatures before cryptographically relevant quantum computers arrive.',
+              color: '#a855f7',
+            },
+            {
+              title: 'Cascading events accelerating',
+              date: '2020–2025',
+              desc: 'Storm Éowyn, Texas freeze, European heatwaves — interconnected infrastructure failures are increasing in frequency and cross-sector impact.',
+              color: '#ef4444',
+            },
+          ].map(f => (
+            <div key={f.title} style={{ padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
+              <div style={{
+                fontSize: 11, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                color: f.color, letterSpacing: '0.08em', marginBottom: 8,
+              }}>
+                {f.date.toUpperCase()}
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 8 }}>{f.title}</div>
+              <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginBottom: 40 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 20 }}>What exists today vs what Munin adds</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ padding: 20, borderRadius: 8, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>EXISTING APPROACHES</div>
+              {['Palantir — analytics, not authorization', 'Everbridge — notification, not dependency modelling', 'Siemens/ABB — sector-specific SCADA, no cross-sector view', 'Manual coordination — phone calls, email chains, committees'].map(item => (
+                <div key={item} style={{ fontSize: 13, color: '#888', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #222' }}>{item}</div>
+              ))}
+            </div>
+            <div style={{ padding: 20, borderRadius: 8, border: '1px solid #22c55e22', background: '#22c55e05' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#22c55e', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>WHAT MUNIN ADDS</div>
+              {['Cross-sector dependency discovery from physics', 'Pre-validated playbooks with regulatory basis', 'Cryptographic authorization packets (PQC + audit trail)', 'Byzantine multi-ministry approval in minutes, not hours'].map(item => (
+                <div key={item} style={{ fontSize: 13, color: '#d4d4d4', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #22c55e44' }}>{item}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: 15, color: '#888', marginBottom: 8 }}>
+            No one is treating <strong style={{ color: '#fff' }}>authorization latency</strong> as the core infrastructure problem.
+          </p>
+          <p style={{ fontSize: 13, color: '#555' }}>
+            Everyone is building better sensors. Munin is the first system that makes the decision path fast enough to matter.
+          </p>
         </div>
       </Section>
 
