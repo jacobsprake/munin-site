@@ -714,11 +714,11 @@ export default function Home() {
         <SectionTitle
           eyebrow="Safety-First Design"
           title="Read-only v1. Humans always decide."
-          subtitle="Munin v1 is architecturally incapable of sending commands to any SCADA endpoint. This is enforced at compile-time, tested in CI, and documented in a structured safety case."
+          subtitle="Munin v1 is architecturally incapable of sending commands to any SCADA endpoint. This is enforced by a runtime read-only guard, validated by static analysis in CI, and documented in a structured safety case."
         />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {[
-            { title: 'WRITE_ACCESS = false', desc: 'Compile-time flag with CI tests proving no code path can actuate. Static analysis scans for socket/HTTP writes to SCADA ports.', badge: 'Enforced' },
+            { title: 'WRITE_ACCESS = false', desc: 'Runtime read-only guard with CI static analysis scanning all engine files for socket/HTTP writes to SCADA ports.', badge: 'Enforced' },
             { title: 'Data diode architecture', desc: 'Ingestion is strictly one-way. Any attempt to open an outbound socket from the analysis enclave fails tests.', badge: 'Tested' },
             { title: 'Structured safety case', desc: 'GSN-style claims → evidence mapping. STPA hazard analysis with 17 unsafe control actions identified and mitigated.', badge: 'Documented' },
             { title: 'NIST 800-82 + IEC 62443', desc: 'Architecture mapped to real OT security standards. Zones, conduits, security levels, and foundational requirements traced to code.', badge: 'Compliant' },
