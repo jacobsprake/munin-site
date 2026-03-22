@@ -214,7 +214,7 @@ function MultiSigFlow() {
       </div>
 
       {/* Ministry cards */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+      <div className="multisig-cards" style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         {ministries.map((m, i) => {
           const signed = step > i;
           return (
@@ -343,7 +343,7 @@ function StatCard({ value, label, sub }: { value: React.ReactNode; label: string
       padding: '28px 24px', borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
       textAlign: 'center',
     }}>
-      <div style={{ fontSize: 36, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: '#fff', marginBottom: 8 }}>
+      <div className="stat-value" style={{ fontSize: 36, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: '#fff', marginBottom: 8 }}>
         {value}
       </div>
       <div style={{ fontSize: 14, fontWeight: 600, color: '#d4d4d4', marginBottom: 4 }}>{label}</div>
@@ -355,7 +355,7 @@ function StatCard({ value, label, sub }: { value: React.ReactNode; label: string
 /* ─── Section wrapper ─── */
 function Section({ id, children, dark }: { id: string; children: React.ReactNode; dark?: boolean }) {
   return (
-    <section id={id} style={{
+    <section id={id} className="section-responsive" style={{
       padding: '80px 24px',
       background: dark ? '#050508' : 'transparent',
     }}>
@@ -375,7 +375,7 @@ function SectionTitle({ eyebrow, title, subtitle }: { eyebrow: string; title: st
       }}>
         {eyebrow}
       </div>
-      <h2 style={{ fontSize: 32, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: subtitle ? 16 : 0 }}>
+      <h2 className="section-title-h2" style={{ fontSize: 32, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: subtitle ? 16 : 0 }}>
         {title}
       </h2>
       {subtitle && <p style={{ fontSize: 17, color: '#888', lineHeight: 1.7, maxWidth: 640 }}>{subtitle}</p>}
@@ -407,15 +407,15 @@ function Nav() {
             MUNIN
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           {['Evidence', 'Problem', 'Solution', 'Demo', 'Docs'].map(s => (
-            <a key={s} href={`#${s.toLowerCase()}`} style={{ fontSize: 13, color: '#888', fontWeight: 500, transition: 'color 0.2s' }}
+            <a key={s} href={`#${s.toLowerCase()}`} className="nav-link-text" style={{ fontSize: 13, color: '#888', fontWeight: 500, transition: 'color 0.2s' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
               onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
               {s}
             </a>
           ))}
-          <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="nav-github" style={{
             fontSize: 13, fontWeight: 600, color: '#fff', padding: '6px 14px',
             background: '#fff1', border: '1px solid #333', borderRadius: 6,
           }}>
@@ -449,14 +449,14 @@ export default function Home() {
           }}>
             Sovereign Infrastructure Orchestration
           </div>
-          <h1 className="animate-fade-in-up delay-100" style={{
+          <h1 className="animate-fade-in-up delay-100 hero-heading" style={{
             fontSize: 56, fontWeight: 800, color: '#fff', lineHeight: 1.1, marginBottom: 24,
             letterSpacing: '-0.03em',
           }}>
             Infrastructure fails in minutes.<br />
             <span style={{ color: '#3b82f6' }}>Authorization takes hours.</span>
           </h1>
-          <p className="animate-fade-in-up delay-200" style={{
+          <p className="animate-fade-in-up delay-200 hero-subtitle" style={{
             fontSize: 19, color: '#888', lineHeight: 1.7, marginBottom: 40, maxWidth: 580, margin: '0 auto 40px',
           }}>
             Munin discovers cross-sector dependencies that no existing system can see,
@@ -488,7 +488,7 @@ export default function Home() {
 
       {/* ── STATS BAR ── */}
       <section style={{ padding: '0 24px 64px' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        <div className="grid-stats" style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           <StatCard value={<Counter end={85} suffix="%" />} label="Faster authorization" sub="2-6 hours → 20-30 minutes" />
           <StatCard value={<Counter end={38} />} label="Scenarios simulated" sub="End-to-end in 0.3 seconds" />
           <StatCard value="0.971" label="Real data confidence" sub="EA river gauge correlation" />
@@ -503,7 +503,7 @@ export default function Home() {
           title="This isn't theoretical. It keeps happening."
           subtitle="Every major post-incident review identifies the same bottleneck: multi-agency coordination and legal authorization — not detection."
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+        <div className="grid-evidence" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
           {[
             {
               name: 'Hurricane Katrina',
@@ -576,7 +576,7 @@ export default function Home() {
           title="The cascade consumes entire sectors before anyone is allowed to act"
           subtitle="Infrastructure failure is not a data problem — we have enough sensors. It is an authority problem. Cross-sector coordination takes 2–6 hours because every step requires phone calls, legal review, and multi-agency sign-off."
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+        <div className="grid-latency" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
           <div>
             <h3 style={{ fontSize: 16, fontWeight: 600, color: '#ef4444', marginBottom: 16, fontFamily: 'JetBrains Mono, monospace' }}>
               TRADITIONAL COORDINATION
@@ -618,7 +618,7 @@ export default function Home() {
           subtitle="Munin infers hidden interdependencies from time-series correlation with lag detection. A power substation and a water pump station 3km away are linked — Munin discovers this before any human maps it."
         />
         <ShadowLinkGraph />
-        <div style={{ marginTop: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div className="grid-features" style={{ marginTop: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
           {[
             { label: 'Temporal correlation', desc: 'Statistical co-movement between sensor feeds across sectors' },
             { label: 'Lag detection', desc: 'Physical delay between cause and effect (e.g. 30s power→water)' },
@@ -639,7 +639,7 @@ export default function Home() {
           title="See the failure propagate before it happens"
           subtitle="Once shadow links are discovered, Munin simulates how a single failure cascades across sectors — power to water to telecom to health — and recommends pre-validated playbooks."
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
+        <div className="grid-cascade" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
           <CascadeTimeline />
           <div>
             <div style={{
@@ -716,7 +716,7 @@ export default function Home() {
           title="Read-only v1. Humans always decide."
           subtitle="Munin v1 is architecturally incapable of sending commands to any SCADA endpoint. This is enforced by a runtime read-only guard, validated by static analysis in CI, and documented in a structured safety case."
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid-safety" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {[
             { title: 'WRITE_ACCESS = false', desc: 'Runtime read-only guard with CI static analysis scanning all engine files for socket/HTTP writes to SCADA ports.', badge: 'Enforced' },
             { title: 'Data diode architecture', desc: 'Ingestion is strictly one-way. Any attempt to open an outbound socket from the analysis enclave fails tests.', badge: 'Tested' },
@@ -787,7 +787,7 @@ export default function Home() {
           eyebrow="Documentation"
           title="Deep technical depth. Open to inspection."
         />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <div className="grid-docs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           {[
             { title: 'Munin Doctrine', desc: 'Vision, contrarian thesis, 10-year view', href: 'MUNIN_DOCTRINE.md' },
             { title: 'Safety Case', desc: 'GSN claims, evidence, residual risks', href: 'SAFETY_CASE.md' },
@@ -818,7 +818,7 @@ export default function Home() {
           eyebrow="Architecture"
           title="Built for sovereign deployment"
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div className="grid-features" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
           {[
             { cat: 'Engine', items: ['Python inference engine', 'Granger causality + lag detection', 'Sensor health scoring', 'Property-based + adversarial tests'] },
             { cat: 'Cryptography', items: ['Ed25519 production signing', 'ML-DSA (FIPS 204) integration path', 'Merkle-chained audit trail', 'Shamir secret sharing'] },
@@ -847,7 +847,7 @@ export default function Home() {
           eyebrow="Why Now"
           title="Three forces converging"
         />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 40 }}>
+        <div className="grid-why-now" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 40 }}>
           {[
             {
               title: 'EU CER Directive',
@@ -883,7 +883,7 @@ export default function Home() {
 
         <div style={{ marginBottom: 40 }}>
           <h3 style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 20 }}>What exists today vs what Munin adds</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="grid-market" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div style={{ padding: 20, borderRadius: 8, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>EXISTING APPROACHES</div>
               {['Palantir — analytics, not authorization', 'Everbridge — notification, not dependency modelling', 'Siemens/ABB — sector-specific SCADA, no cross-sector view', 'Manual coordination — phone calls, email chains, committees'].map(item => (

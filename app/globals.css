@@ -85,3 +85,116 @@ a { color: inherit; text-decoration: none; }
 
 /* Selection */
 ::selection { background: rgba(59, 130, 246, 0.3); color: #fff; }
+
+/* ─── Responsive: Tablet & Mobile ─── */
+@media (max-width: 768px) {
+  /* Hero heading */
+  .hero-heading {
+    font-size: 36px !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  /* Hero subtitle */
+  .hero-subtitle {
+    font-size: 16px !important;
+  }
+
+  /* Section padding */
+  .section-responsive {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+
+  /* Stats bar: 4-col → 2-col */
+  .grid-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Evidence cards: 2-col → 1-col */
+  .grid-evidence {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Latency comparison: 2-col → stacked */
+  .grid-latency {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Feature grids: 3-col → 1-col */
+  .grid-features {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* "Why Now" grid: 3-col → 1-col */
+  .grid-why-now {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Market comparison: 2-col → stacked */
+  .grid-market {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Safety grid: 2-col → 1-col */
+  .grid-safety {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Docs grid: 3-col → 2-col */
+  .grid-docs {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Cascade: 2-col → stacked */
+  .grid-cascade {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Nav links: hide on mobile, show hamburger-free minimal nav */
+  .nav-links {
+    gap: 12px !important;
+  }
+  .nav-links a {
+    font-size: 11px !important;
+  }
+  .nav-github {
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+  }
+
+  /* Section title */
+  .section-title-h2 {
+    font-size: 24px !important;
+  }
+
+  /* Stat card value */
+  .stat-value {
+    font-size: 28px !important;
+  }
+
+  /* Ministry multi-sig cards: flex → wrap */
+  .multisig-cards {
+    flex-wrap: wrap !important;
+  }
+}
+
+/* ─── Responsive: Small phones ─── */
+@media (max-width: 480px) {
+  .hero-heading {
+    font-size: 28px !important;
+  }
+
+  .grid-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-docs {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nav-links a.nav-link-text {
+    display: none !important;
+  }
+}
