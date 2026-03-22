@@ -6,10 +6,12 @@ export const metadata: Metadata = {
   description: 'Decision support for critical infrastructure. Discovers cross-sector dependencies. Compresses crisis authorization from hours to minutes. Post-quantum cryptography. Byzantine multi-ministry approval.',
   openGraph: {
     title: 'Munin — Sovereign Infrastructure Orchestration',
-    description: 'The first sovereign orchestration layer for zero-latency crisis response. Pre-simulated playbooks. Byzantine multi-sig authorisation. Humans decide in minutes, not hours.',
+    description: 'Decision support for critical infrastructure. Discovers cross-sector dependencies invisible to existing systems. Compresses crisis authorization from hours to minutes.',
     type: 'website',
     siteName: 'Munin',
+    url: 'https://munin-site.vercel.app',
   },
+  metadataBase: new URL('https://munin-site.vercel.app'),
   twitter: {
     card: 'summary_large_image',
     title: 'Munin — Sovereign Infrastructure Orchestration',

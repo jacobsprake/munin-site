@@ -267,7 +267,7 @@ function MultiSigFlow() {
             fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#22c55e',
             textAlign: 'center',
           }}>
-            PACKET AUTHORISED — PQC signed, Merkle-chained, audit-logged
+            PACKET AUTHORISED — Ed25519 signed, Merkle-chained, audit-logged
           </div>
         )}
       </div>
@@ -476,6 +476,12 @@ export default function Home() {
             }}>
               Read the Doctrine
             </a>
+            <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Briefing%20Request" style={{
+              padding: '12px 28px', background: 'transparent', color: '#3b82f6', fontWeight: 600,
+              borderRadius: 8, fontSize: 15, border: '1px solid #3b82f644',
+            }}>
+              Request a Briefing
+            </a>
           </div>
         </div>
       </section>
@@ -486,7 +492,7 @@ export default function Home() {
           <StatCard value={<Counter end={85} suffix="%" />} label="Faster authorization" sub="2-6 hours → 20-30 minutes" />
           <StatCard value={<Counter end={38} />} label="Scenarios simulated" sub="End-to-end in 0.3 seconds" />
           <StatCard value="0.971" label="Real data confidence" sub="EA river gauge correlation" />
-          <StatCard value="PQC" label="Quantum-safe signing" sub="Ed25519 + ML-DSA dual-stack" />
+          <StatCard value="Ed25519" label="Production signing" sub="PQC dual-stack in progress" />
         </div>
       </section>
 
@@ -680,7 +686,7 @@ export default function Home() {
         <SectionTitle
           eyebrow="Byzantine Multi-Ministry Approval"
           title="No single entity can unilaterally authorize a dangerous action"
-          subtitle="M-of-N signing with post-quantum cryptography. Packets carry Ed25519 + ML-DSA dual signatures, Merkle-chained audit trails, and TEE attestation records."
+          subtitle="M-of-N signing with Ed25519 production cryptography. Architecture designed for ML-DSA post-quantum dual-stack (integration in progress). Merkle-chained audit trails and TEE attestation interface."
         />
         <MultiSigFlow />
       </Section>
@@ -734,25 +740,45 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ── VIDEO PLACEHOLDER ── */}
-      <Section id="video" dark>
+      {/* ── TRY IT YOURSELF ── */}
+      <Section id="try" dark>
         <SectionTitle
-          eyebrow="See It In Action"
-          title="Full system walkthrough"
+          eyebrow="Try It Yourself"
+          title="Run the full demo in under 5 minutes"
         />
         <div style={{
-          maxWidth: 720, margin: '0 auto', aspectRatio: '16/9', borderRadius: 12,
-          border: '1px solid #1a1a1a', background: '#0a0a0a',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16,
+          maxWidth: 620, margin: '0 auto', background: '#0a0a0a', border: '1px solid #1a1a1a',
+          borderRadius: 12, overflow: 'hidden',
         }}>
-          <div style={{ fontSize: 48, opacity: 0.3 }}>▶</div>
-          <div style={{ fontSize: 15, color: '#666', fontFamily: 'JetBrains Mono, monospace' }}>
-            Video walkthrough coming soon
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
+            background: '#111', borderBottom: '1px solid #1a1a1a',
+          }}>
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ef4444' }} />
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f59e0b' }} />
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#22c55e' }} />
+            <span style={{ marginLeft: 8, fontSize: 12, color: '#666', fontFamily: 'JetBrains Mono, monospace' }}>terminal</span>
           </div>
-          <div style={{ fontSize: 13, color: '#444' }}>
-            CLI demo, graph visualization, cascade prediction, and packet authorization
+          <div style={{ padding: '20px 24px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, lineHeight: 2 }}>
+            <div style={{ color: '#22c55e' }}>$ git clone https://github.com/jacobsprake/munin</div>
+            <div style={{ color: '#22c55e' }}>$ cd munin && pip install -r requirements.txt</div>
+            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
+            <div style={{ color: '#f59e0b' }}># Synthetic scenario — full pipeline</div>
+            <div style={{ color: '#22c55e' }}>$ python engine/cli.py demo carlisle</div>
+            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
+            <div style={{ color: '#f59e0b' }}># Real Environment Agency data — no simulation</div>
+            <div style={{ color: '#22c55e' }}>$ python engine/cli.py demo real-data</div>
+            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
+            <div style={{ color: '#f59e0b' }}># Compare Munin vs naive baseline</div>
+            <div style={{ color: '#22c55e' }}>$ python engine/cli.py baseline carlisle</div>
           </div>
         </div>
+        <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: '#555' }}>
+          Full walkthrough:{' '}
+          <a href={DOCS('DEMO_WALKTHROUGH.md')} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>
+            docs/DEMO_WALKTHROUGH.md
+          </a>
+        </p>
       </Section>
 
       {/* ── DOCS ── */}
@@ -795,7 +821,7 @@ export default function Home() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
           {[
             { cat: 'Engine', items: ['Python inference engine', 'Granger causality + lag detection', 'Sensor health scoring', 'Property-based + adversarial tests'] },
-            { cat: 'Cryptography', items: ['Ed25519 + ML-DSA (FIPS 204)', 'Merkle-chained audit trail', 'Shamir secret sharing', 'Multi-TEE attestation'] },
+            { cat: 'Cryptography', items: ['Ed25519 production signing', 'ML-DSA (FIPS 204) integration path', 'Merkle-chained audit trail', 'Shamir secret sharing'] },
             { cat: 'Platform', items: ['Next.js 14 operator console', 'Air-gapped deployment ready', 'Data diode architecture', 'TLA+ formal specification'] },
           ].map(s => (
             <div key={s.cat} style={{ padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
@@ -866,7 +892,7 @@ export default function Home() {
             </div>
             <div style={{ padding: 20, borderRadius: 8, border: '1px solid #22c55e22', background: '#22c55e05' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#22c55e', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>WHAT MUNIN ADDS</div>
-              {['Cross-sector dependency discovery from physics', 'Pre-validated playbooks with regulatory basis', 'Cryptographic authorization packets (PQC + audit trail)', 'Byzantine multi-ministry approval in minutes, not hours'].map(item => (
+              {['Cross-sector dependency discovery from physics', 'Pre-validated playbooks with regulatory basis', 'Cryptographic authorization packets with Merkle audit trail', 'Byzantine multi-ministry approval in minutes, not hours'].map(item => (
                 <div key={item} style={{ fontSize: 13, color: '#d4d4d4', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #22c55e44' }}>{item}</div>
               ))}
             </div>
@@ -886,24 +912,82 @@ export default function Home() {
         </div>
       </Section>
 
+      {/* ── FOUNDER ── */}
+      <Section id="founder">
+        <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
+          <div style={{
+            fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: '#3b82f6', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16,
+          }}>
+            Founder
+          </div>
+          <h3 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Jacob Sprake</h3>
+          <p style={{ fontSize: 14, color: '#3b82f6', marginBottom: 20, fontFamily: 'JetBrains Mono, monospace' }}>
+            Founder &amp; Technical Lead, SPR Labs
+          </p>
+          <p style={{ fontSize: 15, color: '#888', lineHeight: 1.7, marginBottom: 24 }}>
+            Built Munin solo — full inference engine, cryptographic authorization stack,
+            safety case, and 80+ files of technical documentation. Self-taught in infrastructure
+            security, post-quantum cryptography, and ICS/SCADA systems. Based in Milan with
+            Westminster institutional network via the City of London Youth Natural Environment Board.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Partnership%20Inquiry" style={{
+              padding: '10px 24px', background: '#3b82f6', color: '#fff', fontWeight: 600,
+              borderRadius: 8, fontSize: 14,
+            }}>
+              Get in Touch
+            </a>
+            <a href="https://github.com/jacobsprake" target="_blank" rel="noopener noreferrer" style={{
+              padding: '10px 24px', background: 'transparent', color: '#d4d4d4', fontWeight: 600,
+              borderRadius: 8, fontSize: 14, border: '1px solid #333',
+            }}>
+              GitHub Profile
+            </a>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── CTA BANNER ── */}
+      <section style={{
+        padding: '48px 24px', background: '#0a0a0a', borderTop: '1px solid #1a1a1a',
+        borderBottom: '1px solid #1a1a1a',
+      }}>
+        <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: 17, color: '#d4d4d4', marginBottom: 8 }}>
+            Seeking early deployment partners in water, energy, and civil protection.
+          </p>
+          <p style={{ fontSize: 14, color: '#666', marginBottom: 20 }}>
+            Munin deploys on your infrastructure. Your data never leaves your jurisdiction.
+          </p>
+          <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Pilot%20Interest" style={{
+            padding: '12px 28px', background: '#fff', color: '#000', fontWeight: 600,
+            borderRadius: 8, fontSize: 15, display: 'inline-block',
+          }}>
+            Request a Pilot Briefing
+          </a>
+        </div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer style={{
-        padding: '48px 24px', borderTop: '1px solid #111',
+        padding: '40px 24px', borderTop: '1px solid #111',
         textAlign: 'center',
       }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <p style={{ fontSize: 15, color: '#666', lineHeight: 1.7, marginBottom: 16 }}>
-            Munin: named for the raven in Norse mythology who flies across the world
-            and reports back what he sees. <em>Munin sees. Humans decide.</em>
+          <p style={{ fontSize: 14, color: '#555', lineHeight: 1.7, marginBottom: 16 }}>
+            Named for the raven in Norse mythology who flies across the world
+            and reports back what he sees. <em style={{ color: '#888' }}>Munin sees. Humans decide.</em>
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 24 }}>
-            <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#888' }}>GitHub</a>
-            <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#888' }}>Doctrine</a>
-            <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#888' }}>Roadmap</a>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
+            <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>GitHub</a>
+            <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Doctrine</a>
+            <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Roadmap</a>
+            <a href="mailto:jacob@sprake.co" style={{ fontSize: 13, color: '#666' }}>Contact</a>
+            <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Security</a>
           </div>
-          <p style={{ fontSize: 13, color: '#444' }}>
-            Built by{' '}
-            <a href="https://github.com/jacobsprake" style={{ color: '#666' }}>Jacob Sprake</a>
+          <p style={{ fontSize: 12, color: '#333' }}>
+            SPR Labs &copy; 2026 &middot; jacob@sprake.co &middot; Milan, IT
           </p>
         </div>
       </footer>
