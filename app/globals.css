@@ -1,200 +1,250 @@
+/* ─────────────────────────────────────────────────────────
+   Munin Systems — Editorial design system
+   Paper / ink / oxblood. Inter + JetBrains Mono + Instrument Serif.
+   ───────────────────────────────────────────────────────── */
+
+:root {
+  --paper: #ECEAE4;
+  --paper-2: #E1DED6;
+  --paper-3: #D6D2C9;
+  --ink: #16181A;
+  --ink-2: #4A4D52;
+  --ink-3: #7C7E83;
+  --rule: #BFBCB3;
+  --rule-soft: #D2CFC6;
+  --signal: #6B1E2C;        /* oxblood — sovereign accent */
+  --signal-soft: #6B1E2C18;
+  --imperial: #1F3A6B;       /* deep classified-folder blue */
+  --imperial-soft: #1F3A6B14;
+  --warn: #B0651A;
+  --ok: #2F6B3A;
+
+  /* Dark inversion for terminal / demo blocks */
+  --ink-bg: #0E0F11;
+  --ink-bg-2: #16181A;
+  --ink-rule: #2A2C2F;
+  --ink-paper: #ECEAE4;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #050508;
-  color: #e5e5e5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'ss01', 'cv11';
+  font-optical-sizing: auto;
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a { color: inherit; text-decoration: none; }
 
+/* Reusable typographic primitives */
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-feature-settings: 'ss02', 'zero';
+}
+
+.serif-italic {
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.frag {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+.hairline {
+  border: none;
+  border-top: 1px solid var(--rule);
+  width: 100%;
+}
+
+/* Hero display type — Palantir-style massive negative tracking */
+.display-xl {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: clamp(48px, 9vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+
+.display-lg {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+}
+
+.display-md {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+/* Body */
+.lede {
+  font-size: clamp(17px, 1.4vw, 21px);
+  line-height: 1.55;
+  color: var(--ink-2);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
 /* Animations */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes scroll-hint {
+  0% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(6px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.4; }
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
-}
-
-@keyframes cascade-flow {
-  0% { stroke-dashoffset: 20; }
-  100% { stroke-dashoffset: 0; }
-}
-
-@keyframes bar-grow {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@keyframes tick {
-  from { opacity: 0; transform: scale(0.5); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes node-pulse {
-  0%, 100% { r: 6; opacity: 0.8; }
-  50% { r: 8; opacity: 1; }
-}
-
-@keyframes link-appear {
-  from { stroke-dashoffset: 100; opacity: 0; }
-  to { stroke-dashoffset: 0; opacity: 1; }
-}
-
-@keyframes sig-fill {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.8s ease-out forwards;
-  opacity: 0;
-}
-
+.animate-fade-in-up { animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; opacity: 0; }
+.animate-fade-in    { animation: fadeIn 0.9s ease-out forwards; opacity: 0; }
 .delay-100 { animation-delay: 0.1s; }
 .delay-200 { animation-delay: 0.2s; }
 .delay-300 { animation-delay: 0.3s; }
 .delay-400 { animation-delay: 0.4s; }
 .delay-500 { animation-delay: 0.5s; }
-.delay-600 { animation-delay: 0.6s; }
-.delay-700 { animation-delay: 0.7s; }
-.delay-800 { animation-delay: 0.8s; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+/* Scrollbar — thin paper-tone */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-3); }
 
 /* Selection */
-::selection { background: rgba(59, 130, 246, 0.3); color: #fff; }
+::selection { background: var(--ink); color: var(--paper); }
 
-/* ─── Responsive: Tablet & Mobile ─── */
-@media (max-width: 768px) {
-  /* Hero heading */
-  .hero-heading {
-    font-size: 36px !important;
-    letter-spacing: -0.02em !important;
-  }
+/* Section / nav primitives */
+.nav-link {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+  transition: color 0.18s ease;
+}
+.nav-link:hover { color: var(--ink); }
 
-  /* Hero subtitle */
-  .hero-subtitle {
-    font-size: 16px !important;
-  }
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 22px;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  border: 1px solid var(--ink);
+  transition: background 0.2s ease, color 0.2s ease;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--signal); border-color: var(--signal); }
 
-  /* Section padding */
-  .section-responsive {
-    padding-top: 48px !important;
-    padding-bottom: 48px !important;
-  }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  padding: 10px 22px;
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid var(--rule);
+  transition: border-color 0.2s ease, background 0.2s ease;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--ink); background: var(--paper-2); }
 
-  /* Stats bar: 4-col → 2-col */
-  .grid-stats {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* Evidence cards: 2-col → 1-col */
-  .grid-evidence {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Latency comparison: 2-col → stacked */
-  .grid-latency {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-  }
-
-  /* Feature grids: 3-col → 1-col */
-  .grid-features {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* "Why Now" grid: 3-col → 1-col */
-  .grid-why-now {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Market comparison: 2-col → stacked */
-  .grid-market {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Safety grid: 2-col → 1-col */
-  .grid-safety {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Docs grid: 3-col → 2-col */
-  .grid-docs {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  /* Cascade: 2-col → stacked */
-  .grid-cascade {
-    grid-template-columns: 1fr !important;
-    gap: 32px !important;
-  }
-
-  /* Nav links: hide on mobile, show hamburger-free minimal nav */
-  .nav-links {
-    gap: 12px !important;
-  }
-  .nav-links a {
-    font-size: 11px !important;
-  }
-  .nav-github {
-    padding: 4px 10px !important;
-    font-size: 11px !important;
-  }
-
-  /* Section title */
-  .section-title-h2 {
-    font-size: 24px !important;
-  }
-
-  /* Stat card value */
-  .stat-value {
-    font-size: 28px !important;
-  }
-
-  /* Ministry multi-sig cards: flex → wrap */
-  .multisig-cards {
-    flex-wrap: wrap !important;
-  }
+/* Editorial "spec sheet" header — three-column rule below sections */
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 32px;
+  padding: 18px 0 22px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.spec-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* ─── Responsive: Small phones ─── */
-@media (max-width: 480px) {
-  .hero-heading {
-    font-size: 28px !important;
-  }
+/* Hairline grid card — borderless cards using rules */
+.rule-card {
+  border-top: 1px solid var(--rule);
+  padding: 28px 0 0;
+}
 
-  .grid-stats {
+/* Bordered card (used sparingly) */
+.box {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 24px;
+}
+
+.box-strong {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  padding: 24px;
+}
+
+/* Dark inversion sections (terminal/demo) */
+.section-dark {
+  background: var(--ink-bg);
+  color: var(--ink-paper);
+}
+.section-dark .eyebrow,
+.section-dark .frag { color: var(--ink-3); }
+.section-dark .lede { color: #BFBCB3; }
+.section-dark .hairline { border-top-color: var(--ink-rule); }
+.section-dark .box { border-color: var(--ink-rule); background: var(--ink-bg-2); }
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .spec-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+  }
+  .grid-2-collapse, .grid-3-collapse {
     grid-template-columns: 1fr !important;
   }
-
-  .grid-docs {
-    grid-template-columns: 1fr !important;
+  .grid-4-collapse {
+    grid-template-columns: 1fr 1fr !important;
   }
+  .nav-links-desktop { display: none !important; }
+}
 
-  .nav-links a.nav-link-text {
-    display: none !important;
-  }
+@media (max-width: 560px) {
+  .spec-grid { grid-template-columns: 1fr; gap: 16px; }
+  .grid-4-collapse { grid-template-columns: 1fr !important; }
+  .hide-on-mobile { display: none !important; }
 }

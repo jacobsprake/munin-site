@@ -1,12 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import GlobalSignal from './global-signal';
 
-/* ─── Shared Constants ─── */
+/* ═══════════════════════════════════════════════════════
+   Munin Systems — editorial / sovereign / Palantir-inspired
+   ═══════════════════════════════════════════════════════ */
+
 const GITHUB = 'https://github.com/jacobsprake/munin';
 const DOCS = (name: string) => `${GITHUB}/blob/main/docs/${name}`;
+const CONTACT = 'mailto:jacob@muninsystems.com?subject=Munin%20—%20Briefing%20Request';
 
-/* ─── Utility: Intersection Observer for scroll animations ─── */
+/* ─── Intersection Observer ─── */
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -20,8 +25,8 @@ function useInView(threshold = 0.15) {
   return { ref, visible };
 }
 
-/* ─── Animated Counter ─── */
-function Counter({ end, suffix = '', prefix = '', duration = 2000 }: { end: number; suffix?: string; prefix?: string; duration?: number }) {
+/* ─── Animated counter (used in stats strip) ─── */
+function Counter({ end, suffix = '', prefix = '', duration = 1800 }: { end: number; suffix?: string; prefix?: string; duration?: number }) {
   const [val, setVal] = useState(0);
   const { ref, visible } = useInView();
   useEffect(() => {
@@ -38,40 +43,59 @@ function Counter({ end, suffix = '', prefix = '', duration = 2000 }: { end: numb
   return <span ref={ref}>{prefix}{val}{suffix}</span>;
 }
 
-/* ─── Latency Comparison Bar ─── */
-function LatencyBar({ label, minutes, max, color, delay }: { label: string; minutes: number; max: number; color: string; delay: string }) {
-  const { ref, visible } = useInView();
-  const pct = (minutes / max) * 100;
+/* ─── Raven sigil — schematic Munin glyph ─── */
+function RavenSigil({ size = 280, stroke = '#16181A' }: { size?: number; stroke?: string }) {
   return (
-    <div ref={ref} style={{ marginBottom: 20 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-        <span style={{ fontSize: 14, color: '#a3a3a3', fontFamily: 'Inter, sans-serif' }}>{label}</span>
-        <span style={{ fontSize: 14, fontWeight: 600, color, fontFamily: 'JetBrains Mono, monospace' }}>
-          {minutes >= 60 ? `${(minutes / 60).toFixed(1)}h` : `${minutes}min`}
-        </span>
-      </div>
-      <div style={{ height: 8, background: '#111', borderRadius: 4, overflow: 'hidden' }}>
-        <div style={{
-          height: '100%',
-          width: visible ? `${pct}%` : '0%',
-          background: color,
-          borderRadius: 4,
-          transition: `width 1.2s cubic-bezier(0.22, 1, 0.36, 1) ${delay}`,
-        }} />
-      </div>
-    </div>
+    <svg viewBox="0 0 200 200" width={size} height={size} aria-hidden>
+      {/* outer dodecagon — 12-axis sovereign frame */}
+      <g fill="none" stroke={stroke} strokeWidth="0.6">
+        <polygon points="100,10 145,28 178,62 196,108 188,158 158,190 110,196 60,188 22,162 8,116 18,68 50,30" />
+        <circle cx="100" cy="100" r="78" opacity="0.35" />
+        <circle cx="100" cy="100" r="56" opacity="0.5" />
+        <circle cx="100" cy="100" r="34" opacity="0.7" />
+      </g>
+      {/* radial axes */}
+      <g stroke={stroke} strokeWidth="0.5" opacity="0.35">
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = (i / 12) * Math.PI * 2;
+          const x = (100 + Math.cos(a) * 92).toFixed(3);
+          const y = (100 + Math.sin(a) * 92).toFixed(3);
+          return <line key={i} x1="100" y1="100" x2={x} y2={y} />;
+        })}
+      </g>
+      {/* raven silhouette — minimal heraldic shape */}
+      <g fill={stroke}>
+        <path d="M70 95 Q 86 70 100 78 Q 116 72 130 92 Q 138 96 142 105 Q 132 108 124 106 L 122 116 Q 112 122 100 122 Q 88 122 78 116 L 76 106 Q 68 108 60 105 Q 64 98 70 95 Z" />
+        {/* eye */}
+        <circle cx="120" cy="92" r="1.4" fill="#ECEAE4" />
+        {/* tail / wing fan */}
+        <path d="M100 122 Q 96 138 88 144 L 100 138 L 112 144 Q 104 138 100 122 Z" />
+      </g>
+      {/* tick marks */}
+      <g fill={stroke} opacity="0.55">
+        {Array.from({ length: 60 }).map((_, i) => {
+          const a = (i / 60) * Math.PI * 2;
+          const r1 = 86, r2 = i % 5 === 0 ? 92 : 89;
+          const x1 = (100 + Math.cos(a) * r1).toFixed(3);
+          const y1 = (100 + Math.sin(a) * r1).toFixed(3);
+          const x2 = (100 + Math.cos(a) * r2).toFixed(3);
+          const y2 = (100 + Math.sin(a) * r2).toFixed(3);
+          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={stroke} strokeWidth="0.5" />;
+        })}
+      </g>
+    </svg>
   );
 }
 
-/* ─── Shadow Link Graph SVG ─── */
+/* ─── Shadow-link graph (paper-tone restyle) ─── */
 function ShadowLinkGraph() {
   const { ref, visible } = useInView(0.3);
   const nodes = [
-    { id: 'SUB_A', x: 80, y: 60, label: 'Substation A', sector: 'power', color: '#3b82f6' },
-    { id: 'PUMP_7', x: 280, y: 40, label: 'Pump Station 7', sector: 'water', color: '#22c55e' },
-    { id: 'TOWER_3', x: 460, y: 70, label: 'Cell Tower 3', sector: 'telecom', color: '#a855f7' },
-    { id: 'HOSP_1', x: 180, y: 160, label: 'Hospital A', sector: 'health', color: '#ef4444' },
-    { id: 'TREAT_2', x: 380, y: 170, label: 'Treatment Plant', sector: 'water', color: '#22c55e' },
+    { id: 'SUB_A', x: 80, y: 60, label: 'Substation A', sector: 'POWER' },
+    { id: 'PUMP_7', x: 280, y: 40, label: 'Pump Station 7', sector: 'WATER' },
+    { id: 'TOWER_3', x: 460, y: 70, label: 'Cell Tower 3', sector: 'TELECOM' },
+    { id: 'HOSP_1', x: 180, y: 160, label: 'Hospital A', sector: 'HEALTH' },
+    { id: 'TREAT_2', x: 380, y: 170, label: 'Treatment Plant', sector: 'WATER' },
   ];
   const links = [
     { from: 0, to: 1, lag: '30s', shadow: true },
@@ -82,7 +106,7 @@ function ShadowLinkGraph() {
   ];
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', maxWidth: 540, margin: '0 auto' }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%' }}>
       <svg viewBox="0 0 540 220" style={{ width: '100%', height: 'auto' }}>
         {links.map((l, i) => {
           const a = nodes[l.from], b = nodes[l.to];
@@ -91,15 +115,16 @@ function ShadowLinkGraph() {
             <g key={i}>
               <line
                 x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                stroke={l.shadow ? '#f59e0b' : '#333'}
-                strokeWidth={l.shadow ? 2 : 1}
-                strokeDasharray={l.shadow ? '6 3' : 'none'}
-                opacity={visible ? 1 : 0}
-                style={{ transition: `opacity 0.6s ease ${0.3 + i * 0.15}s` }}
+                stroke={l.shadow ? '#6B1E2C' : '#16181A'}
+                strokeWidth={l.shadow ? 1.4 : 0.8}
+                strokeDasharray={l.shadow ? '4 3' : 'none'}
+                opacity={visible ? (l.shadow ? 1 : 0.45) : 0}
+                style={{ transition: `opacity 0.6s ease ${0.3 + i * 0.12}s` }}
               />
               {l.shadow && (
-                <text x={mx} y={my - 8} textAnchor="middle" fontSize={10} fill="#f59e0b"
-                  opacity={visible ? 1 : 0} style={{ transition: `opacity 0.5s ease ${0.6 + i * 0.15}s` }}>
+                <text x={mx} y={my - 6} textAnchor="middle" fontSize={9} fill="#6B1E2C"
+                  fontFamily="JetBrains Mono, monospace"
+                  opacity={visible ? 1 : 0} style={{ transition: `opacity 0.5s ease ${0.6 + i * 0.12}s` }}>
                   {l.lag}
                 </text>
               )}
@@ -107,73 +132,73 @@ function ShadowLinkGraph() {
           );
         })}
         {nodes.map((n, i) => (
-          <g key={n.id} opacity={visible ? 1 : 0} style={{ transition: `opacity 0.4s ease ${i * 0.1}s` }}>
-            <circle cx={n.x} cy={n.y} r={visible ? 18 : 12} fill={n.color + '20'} stroke={n.color} strokeWidth={1.5}
+          <g key={n.id} opacity={visible ? 1 : 0} style={{ transition: `opacity 0.4s ease ${i * 0.08}s` }}>
+            <circle cx={n.x} cy={n.y} r={visible ? 14 : 8} fill="#ECEAE4" stroke="#16181A" strokeWidth={1.2}
               style={{ transition: 'r 0.6s ease' }} />
-            <circle cx={n.x} cy={n.y} r={4} fill={n.color} />
-            <text x={n.x} y={n.y + 32} textAnchor="middle" fontSize={11} fill="#a3a3a3" fontFamily="Inter, sans-serif">
+            <circle cx={n.x} cy={n.y} r={3} fill="#16181A" />
+            <text x={n.x} y={n.y + 28} textAnchor="middle" fontSize={10} fill="#16181A">
               {n.label}
+            </text>
+            <text x={n.x} y={n.y + 40} textAnchor="middle" fontSize={8.5} fill="#7C7E83"
+              fontFamily="JetBrains Mono, monospace" letterSpacing="0.06em">
+              {n.sector}
             </text>
           </g>
         ))}
       </svg>
-      {visible && (
-        <div style={{
-          position: 'absolute', bottom: 0, right: 0,
-          background: '#111', border: '1px solid #f59e0b33', borderRadius: 6, padding: '6px 10px',
-          fontSize: 11, color: '#f59e0b', fontFamily: 'JetBrains Mono, monospace',
-        }}>
-          ── shadow link (discovered)
-        </div>
-      )}
+      <div style={{
+        marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--rule)',
+        display: 'flex', gap: 24, fontSize: 11, fontFamily: 'JetBrains Mono, monospace',
+        color: 'var(--ink-2)', letterSpacing: '0.04em',
+      }}>
+        <span><span style={{ display: 'inline-block', width: 18, borderTop: '1.4px dashed #6B1E2C', verticalAlign: 'middle', marginRight: 6 }} />SHADOW LINK (DISCOVERED)</span>
+        <span><span style={{ display: 'inline-block', width: 18, borderTop: '0.8px solid #16181A', verticalAlign: 'middle', marginRight: 6 }} />KNOWN DEPENDENCY</span>
+      </div>
     </div>
   );
 }
 
-/* ─── Cascade Timeline ─── */
+/* ─── Cascade timeline (paper restyle) ─── */
 function CascadeTimeline() {
   const { ref, visible } = useInView(0.2);
   const events = [
-    { t: '0:00', label: 'Substation A trips', color: '#3b82f6', sector: 'POWER' },
-    { t: '0:30', label: 'Pump Station 7 loses power', color: '#22c55e', sector: 'WATER' },
-    { t: '2:00', label: 'Treatment plant pressure drops', color: '#22c55e', sector: 'WATER' },
-    { t: '5:00', label: 'Cell Tower 3 on backup battery', color: '#a855f7', sector: 'TELECOM' },
-    { t: '15:00', label: 'Hospital A water pressure critical', color: '#ef4444', sector: 'HEALTH' },
-    { t: '45:00', label: 'Cell tower battery depleted', color: '#a855f7', sector: 'TELECOM' },
+    { t: '0:00', label: 'Substation A trips', sector: 'POWER' },
+    { t: '0:30', label: 'Pump Station 7 loses power', sector: 'WATER' },
+    { t: '2:00', label: 'Treatment plant pressure drops', sector: 'WATER' },
+    { t: '5:00', label: 'Cell Tower 3 on backup battery', sector: 'TELECOM' },
+    { t: '15:00', label: 'Hospital A water pressure critical', sector: 'HEALTH' },
+    { t: '45:00', label: 'Cell tower battery depleted', sector: 'TELECOM' },
   ];
 
   return (
     <div ref={ref} style={{ position: 'relative', paddingLeft: 24 }}>
-      {/* Vertical line */}
       <div style={{
-        position: 'absolute', left: 11, top: 8, bottom: 8, width: 2,
-        background: visible ? 'linear-gradient(180deg, #3b82f6, #ef4444)' : '#222',
+        position: 'absolute', left: 11, top: 8, bottom: 8, width: 1,
+        background: visible ? 'var(--ink)' : 'var(--rule)',
         transition: 'background 1s ease',
       }} />
       {events.map((ev, i) => (
         <div key={i} style={{
-          display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20,
-          opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : 'translateX(-12px)',
-          transition: `all 0.5s ease ${0.2 + i * 0.12}s`,
+          display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 18,
+          opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : 'translateX(-8px)',
+          transition: `all 0.5s ease ${0.15 + i * 0.1}s`,
         }}>
           <div style={{
-            width: 8, height: 8, borderRadius: '50%', background: ev.color,
-            marginTop: 6, flexShrink: 0, position: 'relative', left: -20,
-            boxShadow: `0 0 8px ${ev.color}66`,
+            width: 7, height: 7, background: 'var(--ink)',
+            marginTop: 6, flexShrink: 0, position: 'relative', left: -19,
           }} />
           <div style={{ marginLeft: -12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-              <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: ev.color, fontWeight: 600 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--ink)', fontWeight: 500 }}>
                 T+{ev.t}
               </span>
-              <span style={{
-                fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: ev.color, fontWeight: 600,
-                background: ev.color + '15', padding: '1px 6px', borderRadius: 3, letterSpacing: '0.05em',
+              <span className="mono" style={{
+                fontSize: 9.5, color: 'var(--ink-2)', letterSpacing: '0.1em',
               }}>
                 {ev.sector}
               </span>
             </div>
-            <span style={{ fontSize: 14, color: '#d4d4d4' }}>{ev.label}</span>
+            <span style={{ fontSize: 14, color: 'var(--ink)' }}>{ev.label}</span>
           </div>
         </div>
       ))}
@@ -181,7 +206,7 @@ function CascadeTimeline() {
   );
 }
 
-/* ─── M-of-N Signing Animation ─── */
+/* ─── Multi-sig flow ─── */
 function MultiSigFlow() {
   const { ref, visible } = useInView(0.3);
   const [step, setStep] = useState(0);
@@ -198,76 +223,73 @@ function MultiSigFlow() {
   }, [visible]);
 
   const ministries = [
-    { name: 'Environment Agency', icon: '🌊' },
-    { name: 'Energy Authority', icon: '⚡' },
-    { name: 'Civil Protection', icon: '🛡' },
+    { name: 'Environment Agency', code: 'EA' },
+    { name: 'Energy Authority', code: 'OFGEM' },
+    { name: 'Civil Protection', code: 'COBR' },
   ];
 
   return (
-    <div ref={ref} style={{ maxWidth: 460, margin: '0 auto' }}>
-      {/* Quorum policy */}
-      <div style={{
-        textAlign: 'center', marginBottom: 24, fontSize: 13,
-        fontFamily: 'JetBrains Mono, monospace', color: '#666',
+    <div ref={ref}>
+      <div className="mono" style={{
+        fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.1em',
+        marginBottom: 18, paddingBottom: 10, borderBottom: '1px solid var(--rule)',
       }}>
-        QUORUM POLICY: 2 of 3 ministries required
+        QUORUM POLICY · 2 OF 3 MINISTRIES REQUIRED
       </div>
 
-      {/* Ministry cards */}
-      <div className="multisig-cards" style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+      <div className="grid-3-collapse" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
         {ministries.map((m, i) => {
           const signed = step > i;
           return (
             <div key={i} style={{
-              flex: 1, padding: '16px 12px', borderRadius: 8,
-              border: `1px solid ${signed ? '#22c55e44' : '#222'}`,
-              background: signed ? '#22c55e08' : '#0a0a0a',
-              textAlign: 'center',
+              padding: '20px 16px',
+              border: `1px solid ${signed ? 'var(--ink)' : 'var(--rule)'}`,
+              background: signed ? 'var(--paper-2)' : 'transparent',
               transition: 'all 0.4s ease',
             }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{m.icon}</div>
-              <div style={{ fontSize: 12, color: '#a3a3a3', marginBottom: 8 }}>{m.name}</div>
-              <div style={{
-                fontSize: 11, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                color: signed ? '#22c55e' : '#444',
+              <div className="mono" style={{ fontSize: 10, color: 'var(--ink-2)', letterSpacing: '0.1em', marginBottom: 8 }}>
+                /{String(i + 1).padStart(2, '0')} · {m.code}
+              </div>
+              <div style={{ fontSize: 14, color: 'var(--ink)', marginBottom: 12, fontWeight: 500 }}>{m.name}</div>
+              <div className="mono" style={{
+                fontSize: 11, fontWeight: 500, letterSpacing: '0.1em',
+                color: signed ? 'var(--ok)' : 'var(--ink-3)',
                 transition: 'color 0.3s ease',
               }}>
-                {signed ? '✓ SIGNED' : 'PENDING'}
+                {signed ? '✓ SIGNED · Ed25519' : '·· PENDING'}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Progress bar */}
-      <div style={{ background: '#111', borderRadius: 6, padding: 16 }}>
+      <div className="box">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-          <span style={{ fontSize: 12, color: '#666', fontFamily: 'JetBrains Mono, monospace' }}>
-            Signatures: {Math.min(step, 3)}/3
+          <span className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.08em' }}>
+            SIGNATURES · {Math.min(step, 3)} OF 3
           </span>
-          <span style={{
-            fontSize: 12, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-            color: step >= 2 ? '#22c55e' : step >= 4 ? '#22c55e' : '#f59e0b',
+          <span className="mono" style={{
+            fontSize: 11, fontWeight: 500, letterSpacing: '0.08em',
+            color: step >= 2 ? 'var(--ok)' : 'var(--warn)',
           }}>
-            {step >= 2 ? 'QUORUM MET' : 'COLLECTING...'}
+            {step >= 2 ? 'QUORUM MET' : 'COLLECTING…'}
           </span>
         </div>
-        <div style={{ height: 4, background: '#1a1a1a', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ height: 2, background: 'var(--rule-soft)', overflow: 'hidden' }}>
           <div style={{
-            height: '100%', borderRadius: 2,
-            background: step >= 2 ? '#22c55e' : '#f59e0b',
+            height: '100%',
+            background: step >= 2 ? 'var(--ok)' : 'var(--warn)',
             width: `${(Math.min(step, 3) / 3) * 100}%`,
             transition: 'width 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
           }} />
         </div>
         {step >= 4 && (
-          <div style={{
-            marginTop: 12, padding: '8px 12px', borderRadius: 4,
-            background: '#22c55e10', border: '1px solid #22c55e33',
-            fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#22c55e',
-            textAlign: 'center',
+          <div className="mono" style={{
+            marginTop: 14, padding: '10px 12px',
+            border: '1px solid var(--ok)', color: 'var(--ok)',
+            fontSize: 11, letterSpacing: '0.06em', textAlign: 'center',
           }}>
-            PACKET AUTHORISED — Ed25519 signed, Merkle-chained, audit-logged
+            PACKET AUTHORISED · ED25519 · HASH-CHAINED · AUDIT-LOGGED
           </div>
         )}
       </div>
@@ -275,27 +297,27 @@ function MultiSigFlow() {
   );
 }
 
-/* ─── Terminal Demo ─── */
+/* ─── Terminal (dark inversion) ─── */
 function TerminalDemo() {
   const { ref, visible } = useInView(0.3);
   const [lineIdx, setLineIdx] = useState(0);
   const lines = [
-    { text: '$ ./scripts/munin demo real-data', color: '#22c55e', delay: 400 },
+    { text: '$ ./scripts/munin demo real-data', color: '#ECEAE4', delay: 400 },
     { text: '', color: '', delay: 200 },
-    { text: '  Loading real Environment Agency river gauge data...', color: '#a3a3a3', delay: 600 },
-    { text: '  Source: environment.data.gov.uk/flood-monitoring', color: '#666', delay: 400 },
+    { text: '  Loading real Environment Agency river gauge data…', color: '#A8A6A0', delay: 600 },
+    { text: '  source: environment.data.gov.uk/flood-monitoring', color: '#7C7E83', delay: 400 },
     { text: '', color: '', delay: 200 },
-    { text: '  ✓ Loaded eden_sands_centre: 1000 readings', color: '#d4d4d4', delay: 500 },
-    { text: '  ✓ Loaded petteril_botcherby: 1000 readings', color: '#d4d4d4', delay: 500 },
+    { text: '  ✓ Loaded eden_sands_centre · 1000 readings', color: '#ECEAE4', delay: 500 },
+    { text: '  ✓ Loaded petteril_botcherby · 1000 readings', color: '#ECEAE4', delay: 500 },
     { text: '', color: '', delay: 200 },
-    { text: '  ━━━ Shadow Link Discovered ━━━', color: '#f59e0b', delay: 600 },
-    { text: '  eden_sands_centre → petteril_botcherby', color: '#fff', delay: 400 },
-    { text: '    Confidence: 0.971', color: '#facc15', delay: 300 },
-    { text: '    Lag: 300s (5 minutes)', color: '#facc15', delay: 300 },
-    { text: '    Stability: 0.640', color: '#facc15', delay: 300 },
+    { text: '  ── SHADOW LINK DISCOVERED ──', color: '#C26A78', delay: 600 },
+    { text: '  eden_sands_centre → petteril_botcherby', color: '#ECEAE4', delay: 400 },
+    { text: '    confidence  0.971', color: '#D9C58A', delay: 300 },
+    { text: '    lag         300s (5 minutes)', color: '#D9C58A', delay: 300 },
+    { text: '    stability   0.640', color: '#D9C58A', delay: 300 },
     { text: '', color: '', delay: 200 },
-    { text: '  No synthetic data. No simulation. Real sensor readings.', color: '#666', delay: 500 },
-    { text: '  Known hydrological relationship confirmed.', color: '#22c55e', delay: 0 },
+    { text: '  No synthetic data. No simulation.', color: '#A8A6A0', delay: 500 },
+    { text: '  Known hydrological relationship confirmed.', color: '#7AB48A', delay: 0 },
   ];
 
   useEffect(() => {
@@ -306,120 +328,123 @@ function TerminalDemo() {
 
   return (
     <div ref={ref} style={{
-      background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 12,
-      overflow: 'hidden', maxWidth: 620, margin: '0 auto',
+      background: 'var(--ink-bg-2)', border: '1px solid var(--ink-rule)',
+      overflow: 'hidden',
     }}>
-      {/* Title bar */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
-        background: '#111', borderBottom: '1px solid #1a1a1a',
+      <div className="mono" style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '10px 16px',
+        borderBottom: '1px solid var(--ink-rule)', background: 'var(--ink-bg)',
+        fontSize: 11, color: '#7C7E83', letterSpacing: '0.08em',
       }}>
-        <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ef4444' }} />
-        <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f59e0b' }} />
-        <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#22c55e' }} />
-        <span style={{ marginLeft: 8, fontSize: 12, color: '#666', fontFamily: 'JetBrains Mono, monospace' }}>
-          munin — real data demo
-        </span>
+        <span>MUNIN · REAL-DATA DEMO</span>
+        <span>EA/FLOOD-MONITORING · 2026-01</span>
       </div>
-      {/* Terminal body */}
-      <div style={{ padding: '16px 20px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, lineHeight: 1.8, minHeight: 320 }}>
+      <div style={{ padding: '20px 24px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, lineHeight: 1.85, minHeight: 360 }}>
         {lines.slice(0, lineIdx).map((l, i) => (
           <div key={i} style={{ color: l.color, minHeight: l.text ? undefined : 8 }}>
-            {l.text || '\u00a0'}
+            {l.text || ' '}
           </div>
         ))}
         {lineIdx < lines.length && (
-          <span style={{ display: 'inline-block', width: 8, height: 16, background: '#22c55e', animation: 'pulse-glow 1s infinite' }} />
+          <span style={{ display: 'inline-block', width: 8, height: 14, background: '#ECEAE4', animation: 'pulse-cursor 0.9s infinite' }} />
         )}
       </div>
     </div>
   );
 }
 
-/* ─── Stat Card ─── */
-function StatCard({ value, label, sub }: { value: React.ReactNode; label: string; sub: string }) {
+/* ─── Section primitives ─── */
+function Section({ id, dark, children, frag }: { id: string; dark?: boolean; children: React.ReactNode; frag?: string }) {
   return (
-    <div style={{
-      padding: '28px 24px', borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
-      textAlign: 'center',
+    <section id={id} className={dark ? 'section-dark' : ''} style={{
+      padding: '96px 32px',
+      borderTop: dark ? '1px solid var(--ink-rule)' : '1px solid var(--rule)',
     }}>
-      <div className="stat-value" style={{ fontSize: 36, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: '#fff', marginBottom: 8 }}>
-        {value}
-      </div>
-      <div style={{ fontSize: 14, fontWeight: 600, color: '#d4d4d4', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 12, color: '#666' }}>{sub}</div>
-    </div>
-  );
-}
-
-/* ─── Section wrapper ─── */
-function Section({ id, children, dark }: { id: string; children: React.ReactNode; dark?: boolean }) {
-  return (
-    <section id={id} className="section-responsive" style={{
-      padding: '80px 24px',
-      background: dark ? '#050508' : 'transparent',
-    }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        {frag && (
+          <div className="frag" style={{ marginBottom: 24 }}>/{frag}</div>
+        )}
         {children}
       </div>
     </section>
   );
 }
 
-function SectionTitle({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
+function SpecHeader({ title, eyebrow, builtOn, scope, status }: {
+  title: string; eyebrow: string;
+  builtOn: string[]; scope: string; status: string;
+}) {
   return (
-    <div style={{ marginBottom: 48 }}>
-      <div style={{
-        fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase',
-        color: '#3b82f6', fontFamily: 'JetBrains Mono, monospace', marginBottom: 12,
-      }}>
-        {eyebrow}
+    <div style={{ marginBottom: 56 }}>
+      <div className="eyebrow" style={{ marginBottom: 18 }}>{eyebrow}</div>
+      <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 36 }}>{title}</h2>
+      <div className="spec-grid">
+        <div>
+          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>BUILT ON</span>
+          {builtOn.map(b => (
+            <span key={b} className="mono" style={{ fontSize: 12, color: 'var(--ink)', letterSpacing: '0.02em' }}>→ {b}</span>
+          ))}
+        </div>
+        <div>
+          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>SCOPE</span>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>{scope}</span>
+        </div>
+        <div style={{ gridColumn: 'span 2' }}>
+          <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>STATUS</span>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>{status}</span>
+        </div>
       </div>
-      <h2 className="section-title-h2" style={{ fontSize: 32, fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: subtitle ? 16 : 0 }}>
-        {title}
-      </h2>
-      {subtitle && <p style={{ fontSize: 17, color: '#888', lineHeight: 1.7, maxWidth: 640 }}>{subtitle}</p>}
     </div>
   );
 }
 
-/* ─── Navigation ─── */
+/* ─── Nav ─── */
 function Nav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: 'rgba(5, 5, 8, 0.85)', backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid #1a1a1a',
+      background: scrolled ? 'rgba(236, 234, 228, 0.92)' : 'rgba(236, 234, 228, 0.6)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      borderBottom: scrolled ? '1px solid var(--rule)' : '1px solid transparent',
+      transition: 'all 0.2s ease',
     }}>
       <div style={{
-        maxWidth: 1100, margin: '0 auto', padding: '0 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56,
+        maxWidth: 1180, margin: '0 auto', padding: '0 32px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 6, background: '#111', border: '1px solid #222',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14, fontWeight: 700, color: '#3b82f6', fontFamily: 'JetBrains Mono, monospace',
-          }}>
-            M
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: '#fff', letterSpacing: '0.05em' }}>
-            MUNIN
+        <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
+            <circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" strokeWidth="1" />
+            <path d="M6 11 Q 8 7 11 8 Q 14 7 16 11 Q 13 14 11 13 Q 9 14 6 11 Z" fill="currentColor" />
+            <circle cx="13" cy="10" r="0.8" fill="var(--paper)" />
+          </svg>
+          <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
+            Munin Systems
           </span>
-        </div>
-        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          {['Evidence', 'Problem', 'Solution', 'Demo', 'Docs'].map(s => (
-            <a key={s} href={`#${s.toLowerCase()}`} className="nav-link-text" style={{ fontSize: 13, color: '#888', fontWeight: 500, transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#888')}>
-              {s}
-            </a>
+        </a>
+        <div className="nav-links-desktop" style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+          {[
+            { label: 'Problem', href: '#problem' },
+            { label: 'Platform', href: '#platform' },
+            { label: 'Demo', href: '#demo' },
+            { label: 'Safety', href: '#safety' },
+            { label: 'Why now', href: '#why-now' },
+          ].map(s => (
+            <a key={s.label} href={s.href} className="nav-link">{s.label}</a>
           ))}
-          <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="nav-github" style={{
-            fontSize: 13, fontWeight: 600, color: '#fff', padding: '6px 14px',
-            background: '#fff1', border: '1px solid #333', borderRadius: 6,
-          }}>
-            GitHub →
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="nav-link">GitHub ↗</a>
+          <a href={CONTACT} className="btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
+            Request briefing
           </a>
         </div>
       </div>
@@ -428,7 +453,7 @@ function Nav() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   MAIN PAGE
+   PAGE
    ═══════════════════════════════════════════════════════ */
 
 export default function Home() {
@@ -438,356 +463,548 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section style={{
-        paddingTop: 120, paddingBottom: 80, padding: '120px 24px 80px',
-        background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.08), transparent)',
+        paddingTop: 120, paddingBottom: 0, padding: '160px 32px 0',
+        position: 'relative', overflow: 'hidden',
       }}>
-        <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
-          <div className="animate-fade-in-up" style={{
-            display: 'inline-block', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em',
-            textTransform: 'uppercase', color: '#3b82f6', fontFamily: 'JetBrains Mono, monospace',
-            padding: '4px 12px', border: '1px solid #3b82f633', borderRadius: 20, marginBottom: 24,
-          }}>
-            Sovereign Infrastructure Orchestration
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          {/* Top spec line */}
+          <div className="spec-grid" style={{ marginBottom: 64, borderTop: 'none', paddingTop: 0 }}>
+            <div>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>CATEGORY</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>CRITICAL-INCIDENT AUTHORISATION INFRA</span>
+            </div>
+            <div>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>POSTURE</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>ADVISORY-MODE · HUMAN-IN-LOOP</span>
+            </div>
+            <div>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>DEPLOYMENT</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>SOVEREIGN · ON-PREM</span>
+            </div>
+            <div>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.12em' }}>JURISDICTION</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>EU · UK · NATO</span>
+            </div>
           </div>
-          <h1 className="animate-fade-in-up delay-100 hero-heading" style={{
-            fontSize: 56, fontWeight: 800, color: '#fff', lineHeight: 1.1, marginBottom: 24,
-            letterSpacing: '-0.03em',
-          }}>
-            Infrastructure fails in minutes.<br />
-            <span style={{ color: '#3b82f6' }}>Authorization takes hours.</span>
+
+          {/* Display split — Palantir-style "Warp×Speed" treatment */}
+          <h1 className="display-xl animate-fade-in-up" style={{ marginBottom: 0 }}>
+            Decision
           </h1>
-          <p className="animate-fade-in-up delay-200 hero-subtitle" style={{
-            fontSize: 19, color: '#888', lineHeight: 1.7, marginBottom: 40, maxWidth: 580, margin: '0 auto 40px',
+          <h1 className="display-xl animate-fade-in-up delay-100" style={{
+            display: 'flex', alignItems: 'center', gap: 'clamp(16px, 3vw, 48px)',
+            marginBottom: 0,
           }}>
-            Munin discovers cross-sector dependencies that no existing system can see,
-            pre-simulates cascade failures, and compresses crisis authorization from
-            2–6 hours to under 30 minutes.
-          </p>
-          <div className="animate-fade-in-up delay-300" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{
-              padding: '12px 28px', background: '#fff', color: '#000', fontWeight: 600,
-              borderRadius: 8, fontSize: 15,
+            <span style={{ color: 'var(--signal)' }}>Latency.</span>
+            <span aria-hidden style={{ flex: '0 0 auto', display: 'inline-block', height: '1px', background: 'var(--ink)', width: 'clamp(40px, 8vw, 120px)' }} />
+            <span className="serif-italic hide-on-mobile" style={{
+              fontSize: 'clamp(20px, 2.4vw, 32px)', color: 'var(--ink-2)',
+              fontWeight: 400, letterSpacing: 0,
+              lineHeight: 1.2, maxWidth: 320, alignSelf: 'flex-end', paddingBottom: 18,
             }}>
-              View Repository
-            </a>
-            <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" style={{
-              padding: '12px 28px', background: 'transparent', color: '#d4d4d4', fontWeight: 600,
-              borderRadius: 8, fontSize: 15, border: '1px solid #333',
-            }}>
-              Read the Doctrine
-            </a>
-            <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Briefing%20Request" style={{
-              padding: '12px 28px', background: 'transparent', color: '#3b82f6', fontWeight: 600,
-              borderRadius: 8, fontSize: 15, border: '1px solid #3b82f644',
-            }}>
-              Request a Briefing
-            </a>
+              the bottleneck no one is naming.
+            </span>
+          </h1>
+
+          <div className="animate-fade-in-up delay-200" style={{
+            marginTop: 56, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64,
+            paddingTop: 28, borderTop: '1px solid var(--rule)',
+          }}>
+            <div>
+              <p className="lede" style={{ maxWidth: 520 }}>
+                We do not sell better awareness. We sell <em className="serif-italic" style={{ color: 'var(--ink)' }}>faster lawful action</em> under regulatory constraints —
+                cryptographically-signed multi-party authorisation packets that compress crisis decisions from
+                two-to-six hours to under thirty minutes, with the audit trail CER, NIS2 and AI Act Article 14
+                require by default.
+              </p>
+              <div style={{ display: 'flex', gap: 12, marginTop: 32, flexWrap: 'wrap' }}>
+                <a href={CONTACT} className="btn-primary">Request a briefing</a>
+                <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="btn-ghost">View repository ↗</a>
+              </div>
+            </div>
+            <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <RavenSigil size={260} />
+            </div>
+          </div>
+
+          {/* Scroll hint */}
+          <div style={{ marginTop: 96, textAlign: 'center', paddingBottom: 56 }}>
+            <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.18em', display: 'block', marginBottom: 8 }}>
+              SCROLL TO READ
+            </span>
+            <span aria-hidden style={{ display: 'inline-block', animation: 'scroll-hint 1.6s ease-in-out infinite' }}>↓</span>
           </div>
         </div>
       </section>
 
-      {/* ── STATS BAR ── */}
-      <section style={{ padding: '0 24px 64px' }}>
-        <div className="grid-stats" style={{ maxWidth: 900, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          <StatCard value={<Counter end={85} suffix="%" />} label="Faster authorization" sub="2-6 hours → 20-30 minutes" />
-          <StatCard value={<Counter end={38} />} label="Scenarios simulated" sub="End-to-end in 0.3 seconds" />
-          <StatCard value="0.971" label="Real data confidence" sub="EA river gauge correlation" />
-          <StatCard value="Ed25519" label="Production signing" sub="PQC dual-stack in progress" />
+      {/* ── STATS STRIP ── */}
+      <section style={{ padding: '0 32px 96px', borderTop: '1px solid var(--rule)' }}>
+        <div className="grid-4-collapse" style={{
+          maxWidth: 1180, margin: '0 auto',
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+        }}>
+          {[
+            { v: <><Counter end={85} suffix="%" /></>, label: 'Faster authorisation', sub: '2-6 hours → 20-30 minutes' },
+            { v: <Counter end={38} />, label: 'Scenarios end-to-end', sub: 'Validated under 5 seconds' },
+            { v: '0.971', label: 'Real-data confidence', sub: 'EA Carlisle catchment' },
+            { v: 'Ed25519', label: 'Production signing', sub: 'PQC dual-stack roadmap' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '32px 28px',
+              borderRight: i < 3 ? '1px solid var(--rule)' : 'none',
+              borderBottom: '1px solid var(--rule)',
+              borderTop: '1px solid var(--rule)',
+            }}>
+              <div className="display-md" style={{ fontWeight: 500, marginBottom: 12 }}>{s.v}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 500, marginBottom: 4 }}>{s.label}</div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.04em' }}>{s.sub}</div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── EVIDENCE: REAL DISASTERS ── */}
-      <Section id="evidence" dark>
-        <SectionTitle
-          eyebrow="The Evidence"
-          title="This isn't theoretical. It keeps happening."
-          subtitle="Every major post-incident review identifies the same bottleneck: multi-agency coordination and legal authorization — not detection."
+      {/* ── LIVE GLOBAL SIGNAL ── */}
+      <GlobalSignal />
+
+      {/* ── WEDGE / CONTRARIAN POSITIONING ── */}
+      <section style={{ padding: '0 32px 96px' }}>
+        <div style={{
+          maxWidth: 1180, margin: '0 auto',
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0,
+          border: '1px solid var(--ink)',
+        }} className="grid-2-collapse">
+          <div style={{ padding: '40px 36px', borderRight: '1px solid var(--rule)' }}>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 14 }}>
+              WHAT EVERYONE ELSE BUILDS
+            </div>
+            <p className="display-md" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 400, color: 'var(--ink-2)' }}>
+              Better <em className="serif-italic">awareness</em>.
+              <br />
+              Dashboards. Data fusion. Contextualisation.
+            </p>
+          </div>
+          <div style={{ padding: '40px 36px', background: 'var(--paper-2)' }}>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--signal)', letterSpacing: '0.14em', marginBottom: 14 }}>
+              WHAT MUNIN BUILDS
+            </div>
+            <p className="display-md" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 500, color: 'var(--ink)' }}>
+              Faster lawful <em className="serif-italic" style={{ color: 'var(--signal)' }}>action</em>.
+              <br />
+              Signable, auditable, oversight-centred decisions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── THE PROBLEM (M.1) ── */}
+      <Section id="problem" frag="M.1">
+        <SpecHeader
+          eyebrow="The authorisation latency problem"
+          title="Cascades move in minutes. Cross-agency authorisation moves in hours. The gap is where civilians die."
+          builtOn={['Detection', 'Coordination', 'Authority']}
+          scope="EU + UK critical infrastructure"
+          status="Documented in every major post-incident review since 2005"
         />
-        <div className="grid-evidence" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
+
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
+          <div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--signal)', letterSpacing: '0.12em', marginBottom: 18 }}>
+              TRADITIONAL COORDINATION · 2-6 HOURS
+            </div>
+            {[
+              ['Incident detection', '~10 min'],
+              ['Cross-agency phone calls', '45 min'],
+              ['Legal review', '60 min'],
+              ['Multi-ministry approval', '120 min'],
+              ['Command execution', '10 min'],
+            ].map(([k, v], i) => (
+              <div key={k} style={{
+                display: 'flex', justifyContent: 'space-between',
+                padding: '14px 0', borderTop: i === 0 ? '1px solid var(--ink)' : '1px solid var(--rule-soft)',
+              }}>
+                <span style={{ fontSize: 14, color: 'var(--ink)' }}>{k}</span>
+                <span className="mono" style={{ fontSize: 13, color: 'var(--ink-2)' }}>{v}</span>
+              </div>
+            ))}
+            <div style={{ borderTop: '1px solid var(--ink)', paddingTop: 14, display: 'flex', justifyContent: 'space-between' }}>
+              <span className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.08em' }}>TOTAL</span>
+              <span className="mono" style={{ fontSize: 18, color: 'var(--signal)', fontWeight: 500 }}>2-6 HOURS</span>
+            </div>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--ok)', letterSpacing: '0.12em', marginBottom: 18 }}>
+              WITH MUNIN · 20-30 MINUTES
+            </div>
+            {[
+              ['Incident detection (same)', '~10 min'],
+              ['Playbook retrieval', '< 1 s'],
+              ['Authorisation packet generated', '< 1 s'],
+              ['3× biometric multi-sig', '15 min'],
+              ['Command execution (same)', '10 min'],
+            ].map(([k, v], i) => (
+              <div key={k} style={{
+                display: 'flex', justifyContent: 'space-between',
+                padding: '14px 0', borderTop: i === 0 ? '1px solid var(--ink)' : '1px solid var(--rule-soft)',
+              }}>
+                <span style={{ fontSize: 14, color: 'var(--ink)' }}>{k}</span>
+                <span className="mono" style={{ fontSize: 13, color: 'var(--ink-2)' }}>{v}</span>
+              </div>
+            ))}
+            <div style={{ borderTop: '1px solid var(--ink)', paddingTop: 14, display: 'flex', justifyContent: 'space-between' }}>
+              <span className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.08em' }}>TOTAL</span>
+              <span className="mono" style={{ fontSize: 18, color: 'var(--ok)', fontWeight: 500 }}>20-30 MIN</span>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── EVIDENCE / HISTORICAL CASCADES (M.2) ── */}
+      <Section id="evidence" frag="M.2">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>The evidence · seven decades of the same failure mode</div>
+        <h2 className="display-md" style={{ maxWidth: 940, marginBottom: 56 }}>
+          The technology to detect the problem existed.
+          <br />
+          <span style={{ color: 'var(--ink-2)' }}>The authority to act did not arrive in time.</span>
+        </h2>
+
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
           {[
-            {
-              name: 'Hurricane Katrina',
-              year: '2005',
-              delay: '37 days',
-              detail: 'FEMA, state, and Red Cross operated in parallel without coordination. Meals took 37 days to reach some areas. The 9/11 Commission-style review found "the single most important failure was coordination."',
-              source: 'Select Bipartisan Committee Report, 2006',
-              color: '#ef4444',
-            },
-            {
-              name: 'Fukushima Daiichi',
-              year: '2011',
-              delay: '7+ hours',
-              detail: 'Reactor venting was delayed 7+ hours while operators, TEPCO management, and the Prime Minister\'s office argued over authorization. Evacuation was uncoordinated across jurisdictions.',
-              source: 'NAIIC Report to the Japanese Diet, 2012',
-              color: '#f59e0b',
-            },
-            {
-              name: 'UK Summer Floods',
-              year: '2007',
-              delay: '3–5 hours',
-              detail: 'Cross-government coordination took 3–5 hours per decision. The Pitt Review recommended "a single framework for multi-agency response" — which still doesn\'t exist.',
-              source: 'The Pitt Review, Cabinet Office, 2008',
-              color: '#3b82f6',
-            },
-            {
-              name: 'Storm Desmond (Carlisle)',
-              year: '2015',
-              delay: '2–6 hours',
+            { name: 'Iberian Peninsula Blackout', year: '2025', delay: '90s collapse · 16h recover',
+              detail: '47 million people lost power when Spain and Portugal\'s grids collapsed in under 90 seconds. The ENTSO-E Expert Panel\'s final report (March 2026) attributed the collapse to "institutional rather than technical" failures — "governance fragmentation [that] impeded coordinated crisis response."',
+              source: 'ENTSO-E Expert Panel, 20 March 2026' },
+            { name: 'Hurricane Helene', year: '2024', delay: 'Comms collapse',
+              detail: 'Hurricane Helene destroyed North Carolina\'s public-safety communications network in a single afternoon. The state\'s after-action review cites interoperability failures and unclear cross-agency roles as the primary delay drivers.',
+              source: 'NC DPS After-Action Review, 2025' },
+            { name: 'Hurricane Katrina', year: '2005', delay: '37 days',
+              detail: 'FEMA, state, and Red Cross operated in parallel without coordination. Meals took 37 days to reach some areas. The Select Bipartisan Committee found "the single most important failure was coordination."',
+              source: 'Select Bipartisan Committee Report, 2006' },
+            { name: 'Fukushima Daiichi', year: '2011', delay: '7+ hours',
+              detail: 'Reactor venting was delayed seven hours while operators, TEPCO management, and the Prime Minister\'s office argued over authorisation. Evacuation was uncoordinated across jurisdictions.',
+              source: 'NAIIC Report to the Japanese Diet, 2012' },
+            { name: 'UK Summer Floods', year: '2007', delay: '3-5 hours',
+              detail: 'Cross-government coordination took 3-5 hours per decision. The Pitt Review recommended "a single framework for multi-agency response" — which still does not exist.',
+              source: 'The Pitt Review, Cabinet Office, 2008' },
+            { name: 'Storm Desmond · Carlisle', year: '2015', delay: '2-6 hours',
               detail: 'Power substation flooded → water pumps failed → treatment offline → hospitals on emergency supply. Each agency responded independently. Cross-sector cascade was not predicted.',
-              source: 'Environment Agency Post-Incident Review, 2016',
-              color: '#22c55e',
-            },
-          ].map(d => (
-            <div key={d.name} style={{
-              padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
+              source: 'Environment Agency Post-Incident Review, 2016' },
+          ].map((d, i) => (
+            <article key={d.name} style={{
+              padding: '32px 28px',
+              borderTop: '1px solid var(--rule)',
+              borderRight: i % 2 === 0 ? '1px solid var(--rule)' : 'none',
+              borderBottom: i >= 4 ? '1px solid var(--rule)' : 'none',
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <div>
-                  <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>{d.name}</span>
-                  <span style={{ fontSize: 13, color: '#666', marginLeft: 8 }}>{d.year}</span>
-                </div>
-                <span style={{
-                  fontSize: 13, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: d.color,
-                  padding: '2px 8px', borderRadius: 4, background: d.color + '15',
-                }}>
-                  {d.delay} delay
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--ink)' }}>
+                  {d.name} <span className="mono" style={{ fontSize: 12, color: 'var(--ink-3)', marginLeft: 6 }}>{d.year}</span>
+                </h3>
+                <span className="mono" style={{ fontSize: 11, color: 'var(--signal)', letterSpacing: '0.06em' }}>
+                  {d.delay}
                 </span>
               </div>
-              <p style={{ fontSize: 13, color: '#a3a3a3', lineHeight: 1.6, marginBottom: 12 }}>{d.detail}</p>
-              <div style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>{d.source}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{
-          textAlign: 'center', padding: '20px 24px', borderRadius: 8,
-          background: '#111', border: '1px solid #1a1a1a',
-        }}>
-          <p style={{ fontSize: 15, color: '#d4d4d4', marginBottom: 4 }}>
-            The common thread in every case: <strong style={{ color: '#fff' }}>the technology to detect the problem existed.
-            The authority to act did not arrive in time.</strong>
-          </p>
-        </div>
-      </Section>
-
-      {/* ── THE PROBLEM ── */}
-      <Section id="problem">
-        <SectionTitle
-          eyebrow="The Problem"
-          title="The cascade consumes entire sectors before anyone is allowed to act"
-          subtitle="Infrastructure failure is not a data problem — we have enough sensors. It is an authority problem. Cross-sector coordination takes 2–6 hours because every step requires phone calls, legal review, and multi-agency sign-off."
-        />
-        <div className="grid-latency" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
-          <div>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#ef4444', marginBottom: 16, fontFamily: 'JetBrains Mono, monospace' }}>
-              TRADITIONAL COORDINATION
-            </h3>
-            <LatencyBar label="Incident detection" minutes={10} max={360} color="#ef4444" delay="0s" />
-            <LatencyBar label="Cross-agency phone calls" minutes={45} max={360} color="#ef4444" delay="0.1s" />
-            <LatencyBar label="Legal review" minutes={60} max={360} color="#ef4444" delay="0.2s" />
-            <LatencyBar label="Multi-ministry approval" minutes={120} max={360} color="#ef4444" delay="0.3s" />
-            <LatencyBar label="Command execution" minutes={10} max={360} color="#ef4444" delay="0.4s" />
-            <div style={{ marginTop: 16, padding: '12px 16px', background: '#ef444410', border: '1px solid #ef444433', borderRadius: 8 }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#ef4444' }}>
-                Total: 2–6 hours
-              </span>
-            </div>
-          </div>
-          <div>
-            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#22c55e', marginBottom: 16, fontFamily: 'JetBrains Mono, monospace' }}>
-              WITH MUNIN
-            </h3>
-            <LatencyBar label="Incident detection (same)" minutes={10} max={360} color="#22c55e" delay="0.5s" />
-            <LatencyBar label="Playbook retrieval" minutes={0.1} max={360} color="#22c55e" delay="0.6s" />
-            <LatencyBar label="Packet generation" minutes={0.1} max={360} color="#22c55e" delay="0.7s" />
-            <LatencyBar label="3× biometric sign-off" minutes={15} max={360} color="#22c55e" delay="0.8s" />
-            <LatencyBar label="Command execution (same)" minutes={10} max={360} color="#22c55e" delay="0.9s" />
-            <div style={{ marginTop: 16, padding: '12px 16px', background: '#22c55e10', border: '1px solid #22c55e33', borderRadius: 8 }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#22c55e' }}>
-                Total: 20–30 minutes
-              </span>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* ── SHADOW LINKS ── */}
-      <Section id="solution">
-        <SectionTitle
-          eyebrow="Shadow Link Discovery"
-          title="Cross-sector dependencies exist in physics, not in any database"
-          subtitle="Munin infers hidden interdependencies from time-series correlation with lag detection. A power substation and a water pump station 3km away are linked — Munin discovers this before any human maps it."
-        />
-        <ShadowLinkGraph />
-        <div className="grid-features" style={{ marginTop: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-          {[
-            { label: 'Temporal correlation', desc: 'Statistical co-movement between sensor feeds across sectors' },
-            { label: 'Lag detection', desc: 'Physical delay between cause and effect (e.g. 30s power→water)' },
-            { label: 'Evidence windows', desc: 'Sliding confidence intervals with stability and health scoring' },
-          ].map(f => (
-            <div key={f.label} style={{ padding: 20, border: '1px solid #1a1a1a', borderRadius: 8, background: '#0a0a0a' }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 6 }}>{f.label}</div>
-              <div style={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{f.desc}</div>
-            </div>
+              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65, marginBottom: 14 }}>{d.detail}</p>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.04em' }}>{d.source}</div>
+            </article>
           ))}
         </div>
       </Section>
 
-      {/* ── CASCADE PREDICTION ── */}
-      <Section id="cascade" dark>
-        <SectionTitle
-          eyebrow="Cascade Prediction"
-          title="See the failure propagate before it happens"
-          subtitle="Once shadow links are discovered, Munin simulates how a single failure cascades across sectors — power to water to telecom to health — and recommends pre-validated playbooks."
+      {/* ── PLATFORM / SHADOW LINKS (M.3) ── */}
+      <Section id="platform" frag="M.3">
+        <SpecHeader
+          eyebrow="The platform · shadow-link discovery"
+          title="Cross-sector dependencies exist in physics, not in any database."
+          builtOn={['Time-series correlation', 'Lag detection', 'Sensor health']}
+          scope="Power · Water · Telecom · Health"
+          status="Layer 1 validated on live UK Environment Agency data"
         />
-        <div className="grid-cascade" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
-          <CascadeTimeline />
+
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 64, alignItems: 'start' }}>
           <div>
-            <div style={{
-              padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
-              marginBottom: 16,
-            }}>
-              <div style={{
-                fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: '#3b82f6',
-                fontWeight: 600, letterSpacing: '0.05em', marginBottom: 12,
-              }}>
+            <p className="lede" style={{ marginBottom: 24 }}>
+              A power substation and a water pump station three kilometres away are causally linked in physics.
+              No database records the dependency. Munin infers it from temporal co-movement and lag — and writes it down.
+            </p>
+            <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: 32 }}>
+              Once shadow links are surfaced, Munin runs cascade simulations across the implied graph and pairs each
+              predicted failure with a pre-validated playbook and the legal basis for action.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 0 }}>
+              {[
+                { k: 'Temporal correlation', v: 'Statistical co-movement between sensor feeds across sectors' },
+                { k: 'Lag detection', v: 'Physical delay between cause and effect (e.g. 30 s power → water)' },
+                { k: 'Evidence windows', v: 'Sliding confidence intervals with stability and health scoring' },
+              ].map((f, i) => (
+                <div key={f.k} style={{
+                  padding: '18px 0',
+                  borderTop: i === 0 ? '1px solid var(--ink)' : '1px solid var(--rule-soft)',
+                  borderBottom: i === 2 ? '1px solid var(--ink)' : 'none',
+                }}>
+                  <div style={{ fontSize: 14, color: 'var(--ink)', fontWeight: 500, marginBottom: 4 }}>{f.k}</div>
+                  <div style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6 }}>{f.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="box" style={{ padding: 32 }}>
+            <ShadowLinkGraph />
+          </div>
+        </div>
+      </Section>
+
+      {/* ── CASCADE PREDICTION (M.4) ── */}
+      <Section id="cascade" frag="M.4">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Cascade prediction</div>
+        <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 56 }}>
+          See the failure propagate before it happens.
+        </h2>
+
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
+          <div>
+            <div className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', letterSpacing: '0.12em', marginBottom: 24 }}>
+              T+0 → T+45MIN · STORM DESMOND · CARLISLE
+            </div>
+            <CascadeTimeline />
+          </div>
+          <div>
+            <div className="box-strong" style={{ padding: 28, marginBottom: 16 }}>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--signal)', letterSpacing: '0.12em', marginBottom: 12 }}>
                 MUNIN RECOMMENDATION
               </div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: '#fff', marginBottom: 8 }}>
+              <div style={{ fontSize: 17, fontWeight: 500, color: 'var(--ink)', marginBottom: 12 }}>
                 Activate backup power to Pump Station 7
               </div>
-              <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6, marginBottom: 16 }}>
+              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65, marginBottom: 18 }}>
                 Prevents downstream cascade to treatment plant and hospital.
                 Estimated impact reduction: 4 sectors → 1 sector.
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              </p>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {['Flood Risk Act §12.3', 'EA Standing Order 7'].map(r => (
-                  <span key={r} style={{
-                    fontSize: 11, padding: '3px 8px', borderRadius: 4,
-                    background: '#3b82f610', border: '1px solid #3b82f633', color: '#3b82f6',
-                    fontFamily: 'JetBrains Mono, monospace',
+                  <span key={r} className="mono" style={{
+                    fontSize: 11, padding: '4px 10px',
+                    border: '1px solid var(--rule)', color: 'var(--ink-2)',
+                    letterSpacing: '0.04em',
                   }}>
                     {r}
                   </span>
                 ))}
               </div>
             </div>
-            <div style={{
-              padding: 16, borderRadius: 8, border: '1px solid #22c55e22', background: '#22c55e05',
-              fontSize: 13, color: '#22c55e', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center',
+            <div className="mono" style={{
+              padding: '14px 18px',
+              border: '1px solid var(--ok)', color: 'var(--ok)',
+              fontSize: 11, letterSpacing: '0.06em', textAlign: 'center',
             }}>
-              Playbook pre-validated. Evidence packaged. Ready for sign-off.
+              PLAYBOOK PRE-VALIDATED · EVIDENCE PACKAGED · READY FOR SIGN-OFF
             </div>
           </div>
         </div>
       </Section>
 
-      {/* ── MULTI-SIG ── */}
-      <Section id="authorization">
-        <SectionTitle
-          eyebrow="Byzantine Multi-Ministry Approval"
-          title="No single entity can unilaterally authorize a dangerous action"
-          subtitle="M-of-N signing with Ed25519 production cryptography. Architecture designed for ML-DSA post-quantum dual-stack (integration in progress). Merkle-chained audit trails and TEE attestation interface."
+      {/* ── MULTI-SIG (M.5) ── */}
+      <Section id="authorization" frag="M.5">
+        <SpecHeader
+          eyebrow="Byzantine multi-ministry approval"
+          title="No single entity can unilaterally authorise a dangerous action."
+          builtOn={['Ed25519', 'M-of-N quorum', 'Hash-chained audit']}
+          scope="Cross-jurisdictional sign-off"
+          status="Production cryptography · ML-DSA roadmap"
         />
-        <MultiSigFlow />
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <MultiSigFlow />
+        </div>
       </Section>
 
-      {/* ── REAL DATA DEMO ── */}
-      <Section id="demo" dark>
-        <SectionTitle
-          eyebrow="Live Demo"
-          title="Real data. Real results."
-          subtitle="Running on actual Environment Agency river gauge data from the Carlisle catchment. No synthetic data. No simulation. Munin discovered the known hydrological relationship between the River Eden and River Petteril — the 5-minute lag matches physical rainfall travel time."
-        />
+      {/* ── DEMO (M.6) ── */}
+      <Section id="demo" frag="M.6" dark>
+        <div className="eyebrow" style={{ marginBottom: 18, color: '#A8A6A0' }}>Live demo · real Environment Agency data</div>
+        <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 36, color: '#ECEAE4' }}>
+          Real data. Real results.
+        </h2>
+        <p className="lede" style={{ maxWidth: 720, marginBottom: 48, color: '#BFBCB3' }}>
+          Running on actual Environment Agency river-gauge data from the Carlisle catchment. No synthetic data.
+          No simulation. Munin discovered the known hydrological relationship between the River Eden and River Petteril
+          — the 5-minute lag matches physical rainfall travel time.
+        </p>
         <TerminalDemo />
-        <div style={{ textAlign: 'center', marginTop: 32 }}>
-          <a href={DOCS('DEMO_WALKTHROUGH.md')} target="_blank" rel="noopener noreferrer" style={{
-            padding: '10px 24px', background: '#111', border: '1px solid #222', borderRadius: 8,
-            fontSize: 14, fontWeight: 600, color: '#d4d4d4', display: 'inline-block',
-          }}>
-            Full demo walkthrough →
+        <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+          <a href={DOCS('DEMO_WALKTHROUGH.md')} target="_blank" rel="noopener noreferrer" className="btn-ghost"
+            style={{ borderColor: 'var(--ink-rule)', color: '#ECEAE4' }}>
+            Full walkthrough ↗
           </a>
         </div>
       </Section>
 
-      {/* ── SAFETY ── */}
-      <Section id="safety">
-        <SectionTitle
-          eyebrow="Safety-First Design"
+      {/* ── SAFETY (M.7) ── */}
+      <Section id="safety" frag="M.7">
+        <SpecHeader
+          eyebrow="Safety-first architecture"
           title="Read-only v1. Humans always decide."
-          subtitle="Munin v1 is architecturally incapable of sending commands to any SCADA endpoint. This is enforced by a runtime read-only guard, validated by static analysis in CI, and documented in a structured safety case."
+          builtOn={['WRITE_ACCESS=false', 'Data-diode ingress', 'STPA hazard analysis']}
+          scope="Advisory mode only — no SCADA writes"
+          status="EU AI Act Article 14 compliant from first principles"
         />
-        <div className="grid-safety" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
           {[
-            { title: 'WRITE_ACCESS = false', desc: 'Runtime read-only guard with CI static analysis scanning all engine files for socket/HTTP writes to SCADA ports.', badge: 'Enforced' },
-            { title: 'Data diode architecture', desc: 'Ingestion is strictly one-way. Any attempt to open an outbound socket from the analysis enclave fails tests.', badge: 'Tested' },
-            { title: 'Structured safety case', desc: 'GSN-style claims → evidence mapping. STPA hazard analysis with 17 unsafe control actions identified and mitigated.', badge: 'Documented' },
-            { title: 'NIST 800-82 + IEC 62443', desc: 'Architecture mapped to real OT security standards. Zones, conduits, security levels, and foundational requirements traced to code.', badge: 'Compliant' },
-          ].map(c => (
-            <div key={c.title} style={{ padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>{c.title}</span>
-                <span style={{
-                  fontSize: 10, padding: '2px 6px', borderRadius: 4,
-                  background: '#22c55e15', color: '#22c55e', fontWeight: 600,
-                  fontFamily: 'JetBrains Mono, monospace',
+            { title: 'WRITE_ACCESS = false', desc: 'Runtime read-only guard. CI static analysis scans every engine file for socket / HTTP writes to SCADA ports.', tag: 'Enforced' },
+            { title: 'Data-diode architecture', desc: 'Ingestion is strictly one-way. Any attempt to open an outbound socket from the analysis enclave fails tests.', tag: 'Tested' },
+            { title: 'Structured safety case', desc: 'GSN-style claims → evidence mapping. STPA hazard analysis with 17 unsafe control actions identified and mitigated.', tag: 'Documented' },
+            { title: 'NIST 800-82 + IEC 62443', desc: 'Architecture mapped to OT security standards. Zones, conduits, security levels and foundational requirements traced to code.', tag: 'Compliant' },
+          ].map((c, i) => (
+            <div key={c.title} style={{
+              padding: '32px 28px',
+              borderTop: '1px solid var(--rule)',
+              borderRight: i % 2 === 0 ? '1px solid var(--rule)' : 'none',
+              borderBottom: i >= 2 ? '1px solid var(--rule)' : 'none',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 500, color: 'var(--ink)' }}>{c.title}</h3>
+                <span className="mono" style={{
+                  fontSize: 10, color: 'var(--ok)', letterSpacing: '0.1em',
+                  border: '1px solid var(--ok)', padding: '2px 8px',
                 }}>
-                  {c.badge}
+                  {c.tag.toUpperCase()}
                 </span>
               </div>
-              <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{c.desc}</div>
+              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65 }}>{c.desc}</p>
             </div>
           ))}
         </div>
-      </Section>
 
-      {/* ── TRY IT YOURSELF ── */}
-      <Section id="try" dark>
-        <SectionTitle
-          eyebrow="Try It Yourself"
-          title="Run the full demo in under 5 minutes"
-        />
         <div style={{
-          maxWidth: 620, margin: '0 auto', background: '#0a0a0a', border: '1px solid #1a1a1a',
-          borderRadius: 12, overflow: 'hidden',
+          marginTop: 56, padding: 36,
+          border: '1px solid var(--ink)', background: 'var(--paper-2)',
         }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px',
-            background: '#111', borderBottom: '1px solid #1a1a1a',
-          }}>
-            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ef4444' }} />
-            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f59e0b' }} />
-            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#22c55e' }} />
-            <span style={{ marginLeft: 8, fontSize: 12, color: '#666', fontFamily: 'JetBrains Mono, monospace' }}>terminal</span>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--ink-2)', letterSpacing: '0.14em', marginBottom: 12 }}>
+            EU AI ACT · ARTICLE 14 · LEGAL REQUIREMENT FROM 2 AUGUST 2026
           </div>
-          <div style={{ padding: '20px 24px', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, lineHeight: 2 }}>
-            <div style={{ color: '#22c55e' }}>$ git clone https://github.com/jacobsprake/munin</div>
-            <div style={{ color: '#22c55e' }}>$ cd munin && pip install -r requirements.txt</div>
-            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
-            <div style={{ color: '#f59e0b' }}># Synthetic scenario — full pipeline</div>
-            <div style={{ color: '#22c55e' }}>$ python engine/cli.py demo carlisle</div>
-            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
-            <div style={{ color: '#f59e0b' }}># Real Environment Agency data — no simulation</div>
-            <div style={{ color: '#22c55e' }}>$ python engine/cli.py demo real-data</div>
-            <div style={{ color: '#a3a3a3' }}>&nbsp;</div>
-            <div style={{ color: '#f59e0b' }}># Compare Munin vs naive baseline</div>
-            <div style={{ color: '#22c55e' }}>$ python engine/cli.py baseline carlisle</div>
-          </div>
+          <p style={{ fontSize: 17, lineHeight: 1.55, color: 'var(--ink)', maxWidth: 880 }}>
+            Munin&apos;s advisory-mode architecture — humans authorise, never systems — is not a marketing reassurance.
+            Under the EU AI Act, human-in-the-loop is a <em className="serif-italic">legal requirement</em> for high-risk
+            AI systems. Autonomous-execution platforms must retrofit oversight scaffolding or exit the high-risk category.
+            Munin is architecturally compliant from first principles.
+          </p>
         </div>
-        <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: '#555' }}>
-          Full walkthrough:{' '}
-          <a href={DOCS('DEMO_WALKTHROUGH.md')} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>
-            docs/DEMO_WALKTHROUGH.md
-          </a>
-        </p>
       </Section>
 
-      {/* ── DOCS ── */}
-      <Section id="docs">
-        <SectionTitle
-          eyebrow="Documentation"
-          title="Deep technical depth. Open to inspection."
-        />
-        <div className="grid-docs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+      {/* ── ENGINEERING (M.8) ── */}
+      <Section id="engineering" frag="M.8">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Engineering · empty repo to validated platform</div>
+        <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 56 }}>
+          Built solo. <span className="serif-italic" style={{ color: 'var(--ink-2)' }}>Fourteen weeks.</span> Every commit public.
+        </h2>
+
+        <div className="grid-4-collapse" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)' }}>
+          {[
+            { v: <><Counter end={14} /> wk</>, label: 'Empty repo → validated', sub: 'From 9 January 2026' },
+            { v: <><Counter end={77} />K</>, label: 'Lines of code', sub: 'Python + TypeScript' },
+            { v: <Counter end={393} />, label: 'Passing tests', sub: '144 Py · 249 JS' },
+            { v: <><Counter end={8} />·<Counter end={7} /></>, label: 'Stages · layers', sub: 'Ingest → audit' },
+            { v: '< 5s', label: 'End-to-end on a laptop', sub: 'Storm Desmond replay' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '28px 24px',
+              borderTop: '1px solid var(--rule)',
+              borderBottom: '1px solid var(--rule)',
+              borderRight: i < 4 ? '1px solid var(--rule)' : 'none',
+            }}>
+              <div className="display-md" style={{ fontWeight: 500, marginBottom: 10 }}>{s.v}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 500, marginBottom: 4 }}>{s.label}</div>
+              <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.04em' }}>{s.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <p className="lede" style={{ marginTop: 48, maxWidth: 880 }}>
+          Eight-stage pipeline — ingest → graph inference → sensor health → anomaly detection → incident build →
+          cascade prediction → authorisation packets → governance audit. Seven-layer intelligence stack including
+          physics-informed neural ODE (RK4), GNN message passing, ensemble Kalman filter, differential privacy with
+          Rényi accounting. Layer 1 validated on live UK Environment Agency data; layers 2-7 on synthetic data
+          pending pilot telemetry.
+        </p>
+
+        <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="btn-ghost">View repository ↗</a>
+          <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" className="btn-ghost">Read the doctrine ↗</a>
+        </div>
+
+        <div style={{
+          marginTop: 56, padding: '24px 28px',
+          borderLeft: '2px solid var(--signal)', background: 'var(--paper-2)',
+        }}>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--signal)', letterSpacing: '0.14em', marginBottom: 8 }}>
+            PILOT STATUS · HONEST LINE
+          </div>
+          <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65 }}>
+            No named customer yet. First wedge: <strong style={{ color: 'var(--ink)' }}>one sector pair</strong>{' '}
+            (power + water, or flood + grid), one designated entity, 90-day shadow-mode evaluation.
+            Exit deliverable is a <strong style={{ color: 'var(--ink)' }}>compliance &amp; response evidence pack</strong>{' '}
+            mapped directly to CER, NIS2 Article 23 and AI Act Article 14 obligations — not a platform transformation.
+            Open to introductions —{' '}
+            <a href={CONTACT} style={{ color: 'var(--ink)', borderBottom: '1px solid var(--ink)' }}>jacob@muninsystems.com</a>.
+          </p>
+        </div>
+      </Section>
+
+      {/* ── WHY NOW (M.9) ── */}
+      <Section id="why-now" frag="M.9">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Why now · five forces converging</div>
+        <h2 className="display-md" style={{ maxWidth: 940, marginBottom: 56 }}>
+          The regulatory window opens in weeks, <span style={{ color: 'var(--ink-2)' }}>not years.</span>
+        </h2>
+
+        <div className="grid-3-collapse" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
+          {[
+            { title: 'Iberian blackout', date: '28 April 2025',
+              desc: '47 million people dark. ENTSO-E\'s final expert panel: the cascade "unfolded faster than human operators could respond" due to "governance fragmentation." Munin\'s thesis delivered verbatim by 49 regulators.' },
+            { title: 'EU CER directive — designation deadline', date: '17 July 2026',
+              desc: 'All 27 member states must designate critical entities. ~3,000 entities into scope. Cross-sector risk assessment becomes a legal requirement. Resilience obligations apply 10 months post-designation.' },
+            { title: 'NIS2 — board-level personal liability', date: 'Article 20 · in force',
+              desc: 'Article 20 makes management bodies personally accountable for cybersecurity risk-management measures. Article 23 forces 24-hour and 72-hour incident reporting. Fines to €10M or 2% of global turnover. Personal liability is what actually drives procurement timing — not the fines.' },
+            { title: 'EU AI Act · Article 14', date: '2 August 2026',
+              desc: 'Human-in-the-loop is now a legal requirement for high-risk AI systems. Munin\'s "humans still decide" architecture is the compliance posture the regulation mandates.' },
+            { title: 'European sovereignty momentum', date: 'Nov 2025 →',
+              desc: 'Franco-German sovereignty summit. €180M Commission sovereign cloud tender. ~90% of European digital infrastructure foreign-controlled. European-origin critical-infrastructure software has unprecedented political tailwind.' },
+            { title: 'Post-quantum transition', date: 'FIPS 204 · CNSA 2.0',
+              desc: 'NIST FIPS 204 finalised August 2024. CNSA 2.0 mandates pure PQC by 2035. Munin is PQC-native by design.' },
+          ].map((f, i) => (
+            <article key={f.title} style={{
+              padding: '32px 28px',
+              borderTop: '1px solid var(--rule)',
+              borderRight: (i % 3) < 2 ? '1px solid var(--rule)' : 'none',
+              borderBottom: i >= 3 ? '1px solid var(--rule)' : 'none',
+            }}>
+              <div className="mono" style={{ fontSize: 10, color: 'var(--signal)', letterSpacing: '0.12em', marginBottom: 10 }}>
+                {f.date.toUpperCase()}
+              </div>
+              <h3 style={{ fontSize: 17, fontWeight: 500, color: 'var(--ink)', marginBottom: 12 }}>{f.title}</h3>
+              <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.65 }}>{f.desc}</p>
+            </article>
+          ))}
+        </div>
+
+        <div style={{
+          marginTop: 64,
+          padding: 40,
+          border: '1px solid var(--ink)',
+          background: 'var(--paper-2)',
+          textAlign: 'center',
+        }}>
+          <p className="display-md" style={{ fontSize: 'clamp(20px, 2.4vw, 30px)', maxWidth: 880, margin: '0 auto', fontWeight: 400 }}>
+            Authorisation, not awareness.
+            <br />
+            <span className="serif-italic" style={{ color: 'var(--signal)' }}>Munin makes the decision path fast enough — and lawful enough — to matter.</span>
+          </p>
+        </div>
+      </Section>
+
+      {/* ── DOCS (M.10) ── */}
+      <Section id="docs" frag="M.10">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Documentation · open to inspection</div>
+        <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 48 }}>Deep technical depth.</h2>
+
+        <div className="grid-3-collapse" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
           {[
             { title: 'Munin Doctrine', desc: 'Vision, contrarian thesis, 10-year view', href: 'MUNIN_DOCTRINE.md' },
             { title: 'Safety Case', desc: 'GSN claims, evidence, residual risks', href: 'SAFETY_CASE.md' },
@@ -798,197 +1015,160 @@ export default function Home() {
             { title: 'Governance', desc: 'Byzantine multi-sig, quorum policies', href: 'GOVERNANCE.md' },
             { title: 'Ministry Integration', desc: 'How Munin fits into government', href: 'MINISTRY_INTEGRATION.md' },
             { title: 'Operator Handbook', desc: 'Step-by-step for field operators', href: 'OPERATOR_HANDBOOK.md' },
-          ].map(d => (
-            <a key={d.title} href={DOCS(d.href)} target="_blank" rel="noopener noreferrer" style={{
-              padding: 16, borderRadius: 8, border: '1px solid #1a1a1a', background: '#0a0a0a',
-              display: 'block', transition: 'border-color 0.2s',
-            }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#333')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#1a1a1a')}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{d.title}</div>
-              <div style={{ fontSize: 12, color: '#666' }}>{d.desc}</div>
-            </a>
-          ))}
-        </div>
-      </Section>
-
-      {/* ── TECH STACK ── */}
-      <Section id="stack" dark>
-        <SectionTitle
-          eyebrow="Architecture"
-          title="Built for sovereign deployment"
-        />
-        <div className="grid-features" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-          {[
-            { cat: 'Engine', items: ['Python inference engine', 'Granger causality + lag detection', 'Sensor health scoring', 'Property-based + adversarial tests'] },
-            { cat: 'Cryptography', items: ['Ed25519 production signing', 'ML-DSA (FIPS 204) integration path', 'Merkle-chained audit trail', 'Shamir secret sharing'] },
-            { cat: 'Platform', items: ['Next.js 14 operator console', 'Air-gapped deployment ready', 'Data diode architecture', 'TLA+ formal specification'] },
-          ].map(s => (
-            <div key={s.cat} style={{ padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
-              <div style={{
-                fontSize: 12, fontWeight: 600, color: '#3b82f6', letterSpacing: '0.08em',
-                fontFamily: 'JetBrains Mono, monospace', marginBottom: 16,
-              }}>
-                {s.cat.toUpperCase()}
-              </div>
-              {s.items.map(item => (
-                <div key={item} style={{ fontSize: 13, color: '#a3a3a3', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #222' }}>
-                  {item}
+          ].map((d, i) => {
+            const col = i % 3;
+            return (
+              <a key={d.title} href={DOCS(d.href)} target="_blank" rel="noopener noreferrer" style={{
+                padding: '24px 24px',
+                borderTop: '1px solid var(--rule)',
+                borderRight: col < 2 ? '1px solid var(--rule)' : 'none',
+                borderBottom: i >= 6 ? '1px solid var(--rule)' : 'none',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                gap: 16, transition: 'background 0.18s ease',
+              }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--paper-2)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 4 }}>{d.title}</div>
+                  <div style={{ fontSize: 12.5, color: 'var(--ink-2)', lineHeight: 1.5 }}>{d.desc}</div>
                 </div>
-              ))}
-            </div>
-          ))}
+                <span className="mono" style={{ fontSize: 16, color: 'var(--ink-3)' }}>↗</span>
+              </a>
+            );
+          })}
         </div>
       </Section>
 
-      {/* ── MARKET & TIMING ── */}
-      <Section id="market">
-        <SectionTitle
-          eyebrow="Why Now"
-          title="Three forces converging"
-        />
-        <div className="grid-why-now" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 40 }}>
-          {[
-            {
-              title: 'EU CER Directive',
-              date: 'July 2026',
-              desc: '27 EU member states must identify critical entities and implement cross-sector risk assessment. Compliance "will need to be technology enabled."',
-              color: '#3b82f6',
-            },
-            {
-              title: 'Post-quantum deadline',
-              date: 'NIST 2024',
-              desc: 'NIST standardized ML-DSA. Critical infrastructure commands signed today need quantum-safe signatures before cryptographically relevant quantum computers arrive.',
-              color: '#a855f7',
-            },
-            {
-              title: 'Cascading events accelerating',
-              date: '2020–2025',
-              desc: 'Storm Éowyn, Texas freeze, European heatwaves — interconnected infrastructure failures are increasing in frequency and cross-sector impact.',
-              color: '#ef4444',
-            },
-          ].map(f => (
-            <div key={f.title} style={{ padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
-              <div style={{
-                fontSize: 11, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                color: f.color, letterSpacing: '0.08em', marginBottom: 8,
-              }}>
-                {f.date.toUpperCase()}
-              </div>
-              <div style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 8 }}>{f.title}</div>
-              <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: 40 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 20 }}>What exists today vs what Munin adds</h3>
-          <div className="grid-market" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <div style={{ padding: 20, borderRadius: 8, border: '1px solid #1a1a1a', background: '#0a0a0a' }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>EXISTING APPROACHES</div>
-              {['Palantir — analytics, not authorization', 'Everbridge — notification, not dependency modelling', 'Siemens/ABB — sector-specific SCADA, no cross-sector view', 'Manual coordination — phone calls, email chains, committees'].map(item => (
-                <div key={item} style={{ fontSize: 13, color: '#888', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #222' }}>{item}</div>
-              ))}
-            </div>
-            <div style={{ padding: 20, borderRadius: 8, border: '1px solid #22c55e22', background: '#22c55e05' }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#22c55e', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>WHAT MUNIN ADDS</div>
-              {['Cross-sector dependency discovery from physics', 'Pre-validated playbooks with regulatory basis', 'Cryptographic authorization packets with Merkle audit trail', 'Byzantine multi-ministry approval in minutes, not hours'].map(item => (
-                <div key={item} style={{ fontSize: 13, color: '#d4d4d4', marginBottom: 8, paddingLeft: 12, borderLeft: '2px solid #22c55e44' }}>{item}</div>
-              ))}
-            </div>
+      {/* ── FOUNDER (M.11) ── */}
+      <Section id="founder" frag="M.11">
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 64 }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 18 }}>Founder</div>
+            <h3 className="display-md" style={{ fontSize: 'clamp(28px, 3vw, 38px)', marginBottom: 8 }}>Jacob Sprake</h3>
+            <p className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', letterSpacing: '0.06em', marginBottom: 24 }}>
+              FOUNDER · MUNIN SYSTEMS · MILAN
+            </p>
+            <RavenSigil size={180} />
           </div>
-        </div>
-
-        <div style={{
-          padding: 24, borderRadius: 12, border: '1px solid #1a1a1a', background: '#0a0a0a',
-          textAlign: 'center',
-        }}>
-          <p style={{ fontSize: 15, color: '#888', marginBottom: 8 }}>
-            No one is treating <strong style={{ color: '#fff' }}>authorization latency</strong> as the core infrastructure problem.
-          </p>
-          <p style={{ fontSize: 13, color: '#555' }}>
-            Everyone is building better sensors. Munin is the first system that makes the decision path fast enough to matter.
-          </p>
-        </div>
-      </Section>
-
-      {/* ── FOUNDER ── */}
-      <Section id="founder">
-        <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
-          <div style={{
-            fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: '#3b82f6', fontFamily: 'JetBrains Mono, monospace', marginBottom: 16,
-          }}>
-            Founder
-          </div>
-          <h3 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Jacob Sprake</h3>
-          <p style={{ fontSize: 14, color: '#3b82f6', marginBottom: 20, fontFamily: 'JetBrains Mono, monospace' }}>
-            Founder &amp; Technical Lead, SPR Labs
-          </p>
-          <p style={{ fontSize: 15, color: '#888', lineHeight: 1.7, marginBottom: 24 }}>
-            Built Munin solo — full inference engine, cryptographic authorization stack,
-            safety case, and 80+ files of technical documentation. Self-taught in infrastructure
-            security, post-quantum cryptography, and ICS/SCADA systems. Based in Milan with
-            Westminster institutional network via the City of London Youth Natural Environment Board.
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Partnership%20Inquiry" style={{
-              padding: '10px 24px', background: '#3b82f6', color: '#fff', fontWeight: 600,
-              borderRadius: 8, fontSize: 14,
-            }}>
-              Get in Touch
-            </a>
-            <a href="https://github.com/jacobsprake" target="_blank" rel="noopener noreferrer" style={{
-              padding: '10px 24px', background: 'transparent', color: '#d4d4d4', fontWeight: 600,
-              borderRadius: 8, fontSize: 14, border: '1px solid #333',
-            }}>
-              GitHub Profile
-            </a>
+          <div>
+            <p className="lede" style={{ marginBottom: 24 }}>
+              Built Munin solo from an empty repo in fourteen weeks — engine, cryptography, safety case, documentation.
+              Every commit public.
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0' }}>
+              {[
+                'Founder · City of London Youth Natural Environment Board',
+                'Head of Marketing · StudyStream (YC) — alongside Munin',
+                'Field research: Iceland, Norway',
+              ].map((item, i) => (
+                <li key={item} style={{
+                  fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.6,
+                  padding: '14px 0',
+                  borderTop: '1px solid var(--rule-soft)',
+                  borderBottom: i === 2 ? '1px solid var(--rule-soft)' : 'none',
+                }}>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <a href={CONTACT} className="btn-primary">Get in touch</a>
+              <a href="https://github.com/jacobsprake" target="_blank" rel="noopener noreferrer" className="btn-ghost">GitHub profile ↗</a>
+              <a href={DOCS('FOUNDER_NOTES.md')} target="_blank" rel="noopener noreferrer" className="btn-ghost">Founder notes ↗</a>
+            </div>
           </div>
         </div>
       </Section>
 
-      {/* ── CTA BANNER ── */}
+      {/* ── CTA STRIP ── */}
       <section style={{
-        padding: '48px 24px', background: '#0a0a0a', borderTop: '1px solid #1a1a1a',
-        borderBottom: '1px solid #1a1a1a',
+        background: 'var(--ink)',
+        color: 'var(--paper)',
+        padding: '96px 32px',
+        borderTop: '1px solid var(--ink)',
       }}>
-        <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ fontSize: 17, color: '#d4d4d4', marginBottom: 8 }}>
-            Seeking early deployment partners in water, energy, and civil protection.
-          </p>
-          <p style={{ fontSize: 14, color: '#666', marginBottom: 20 }}>
-            Munin deploys on your infrastructure. Your data never leaves your jurisdiction.
-          </p>
-          <a href="mailto:jacob@sprake.co?subject=Munin%20—%20Pilot%20Interest" style={{
-            padding: '12px 28px', background: '#fff', color: '#000', fontWeight: 600,
-            borderRadius: 8, fontSize: 15, display: 'inline-block',
-          }}>
-            Request a Pilot Briefing
-          </a>
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          <div className="eyebrow" style={{ color: '#A8A6A0', marginBottom: 24 }}>
+            Seeking deployment partners · water · energy · civil protection
+          </div>
+          <h2 className="display-lg" style={{ color: 'var(--paper)', maxWidth: 940, marginBottom: 32 }}>
+            Munin deploys on <em className="serif-italic" style={{ color: '#C26A78' }}>your</em> infrastructure.
+            <br />
+            Your data never leaves your jurisdiction.
+          </h2>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <a href={CONTACT} style={{
+              padding: '14px 32px', background: 'var(--paper)', color: 'var(--ink)',
+              fontWeight: 500, fontSize: 15, display: 'inline-block',
+            }}>
+              Request a pilot briefing
+            </a>
+            <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{
+              padding: '14px 32px', background: 'transparent', color: 'var(--paper)',
+              fontWeight: 500, fontSize: 15, border: '1px solid var(--ink-rule)', display: 'inline-block',
+            }}>
+              View repository ↗
+            </a>
+          </div>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
       <footer style={{
-        padding: '40px 24px', borderTop: '1px solid #111',
-        textAlign: 'center',
+        padding: '48px 32px',
+        borderTop: '1px solid var(--rule)',
+        background: 'var(--paper)',
       }}>
-        <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <p style={{ fontSize: 14, color: '#555', lineHeight: 1.7, marginBottom: 16 }}>
-            Named for the raven in Norse mythology who flies across the world
-            and reports back what he sees. <em style={{ color: '#888' }}>Munin sees. Humans decide.</em>
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, marginBottom: 16 }}>
-            <a href={GITHUB} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>GitHub</a>
-            <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Doctrine</a>
-            <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Roadmap</a>
-            <a href="mailto:jacob@sprake.co" style={{ fontSize: 13, color: '#666' }}>Contact</a>
-            <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#666' }}>Security</a>
+        <div style={{
+          maxWidth: 1180, margin: '0 auto',
+          display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48,
+        }} className="grid-4-collapse">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
+                <circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" strokeWidth="1" />
+                <path d="M6 11 Q 8 7 11 8 Q 14 7 16 11 Q 13 14 11 13 Q 9 14 6 11 Z" fill="currentColor" />
+              </svg>
+              <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--ink)' }}>Munin Systems</span>
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6, maxWidth: 320 }}>
+              Named for the raven in Norse mythology who flies across the world and reports back what he sees.
+              <br />
+              <em className="serif-italic" style={{ color: 'var(--ink)' }}>Munin sees. Humans decide.</em>
+            </p>
           </div>
-          <p style={{ fontSize: 12, color: '#333' }}>
-            SPR Labs &copy; 2026 &middot; jacob@sprake.co &middot; Milan, IT
-          </p>
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 14 }}>PLATFORM</div>
+            <a href="#problem" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>The problem</a>
+            <a href="#platform" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>The platform</a>
+            <a href="#demo" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Live demo</a>
+            <a href="#safety" className="nav-link" style={{ display: 'block' }}>Safety architecture</a>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 14 }}>RESOURCES</div>
+            <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>GitHub ↗</a>
+            <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Doctrine</a>
+            <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Roadmap</a>
+            <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block' }}>Security</a>
+          </div>
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 14 }}>CONTACT</div>
+            <a href={CONTACT} className="nav-link" style={{ display: 'block', marginBottom: 8 }}>jacob@muninsystems.com</a>
+            <span className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Milan, IT</span>
+            <a href="https://github.com/jacobsprake" target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block' }}>github.com/jacobsprake</a>
+          </div>
+        </div>
+        <div style={{
+          maxWidth: 1180, margin: '40px auto 0', paddingTop: 24,
+          borderTop: '1px solid var(--rule)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+        }}>
+          <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.06em' }}>
+            © 2026 MUNIN SYSTEMS · ALL RIGHTS RESERVED
+          </span>
+          <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.06em' }}>
+            GENESIS RELEASE · BUILT IN MILAN
+          </span>
         </div>
       </footer>
     </main>
