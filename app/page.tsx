@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import GlobalSignal from './global-signal';
+import MuninMark from './munin-mark';
 
 /* ═══════════════════════════════════════════════════════
    Munin Systems — editorial / sovereign / Palantir-inspired
@@ -41,50 +42,6 @@ function Counter({ end, suffix = '', prefix = '', duration = 1800 }: { end: numb
     tick();
   }, [visible, end, duration]);
   return <span ref={ref}>{prefix}{val}{suffix}</span>;
-}
-
-/* ─── Raven sigil — schematic Munin glyph ─── */
-function RavenSigil({ size = 280, stroke = '#16181A' }: { size?: number; stroke?: string }) {
-  return (
-    <svg viewBox="0 0 200 200" width={size} height={size} aria-hidden>
-      {/* outer dodecagon — 12-axis sovereign frame */}
-      <g fill="none" stroke={stroke} strokeWidth="0.6">
-        <polygon points="100,10 145,28 178,62 196,108 188,158 158,190 110,196 60,188 22,162 8,116 18,68 50,30" />
-        <circle cx="100" cy="100" r="78" opacity="0.35" />
-        <circle cx="100" cy="100" r="56" opacity="0.5" />
-        <circle cx="100" cy="100" r="34" opacity="0.7" />
-      </g>
-      {/* radial axes */}
-      <g stroke={stroke} strokeWidth="0.5" opacity="0.35">
-        {Array.from({ length: 12 }).map((_, i) => {
-          const a = (i / 12) * Math.PI * 2;
-          const x = (100 + Math.cos(a) * 92).toFixed(3);
-          const y = (100 + Math.sin(a) * 92).toFixed(3);
-          return <line key={i} x1="100" y1="100" x2={x} y2={y} />;
-        })}
-      </g>
-      {/* raven silhouette — minimal heraldic shape */}
-      <g fill={stroke}>
-        <path d="M70 95 Q 86 70 100 78 Q 116 72 130 92 Q 138 96 142 105 Q 132 108 124 106 L 122 116 Q 112 122 100 122 Q 88 122 78 116 L 76 106 Q 68 108 60 105 Q 64 98 70 95 Z" />
-        {/* eye */}
-        <circle cx="120" cy="92" r="1.4" fill="#ECEAE4" />
-        {/* tail / wing fan */}
-        <path d="M100 122 Q 96 138 88 144 L 100 138 L 112 144 Q 104 138 100 122 Z" />
-      </g>
-      {/* tick marks */}
-      <g fill={stroke} opacity="0.55">
-        {Array.from({ length: 60 }).map((_, i) => {
-          const a = (i / 60) * Math.PI * 2;
-          const r1 = 86, r2 = i % 5 === 0 ? 92 : 89;
-          const x1 = (100 + Math.cos(a) * r1).toFixed(3);
-          const y1 = (100 + Math.sin(a) * r1).toFixed(3);
-          const x2 = (100 + Math.cos(a) * r2).toFixed(3);
-          const y2 = (100 + Math.sin(a) * r2).toFixed(3);
-          return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={stroke} strokeWidth="0.5" />;
-        })}
-      </g>
-    </svg>
-  );
 }
 
 /* ─── Shadow-link graph (paper-tone restyle) ─── */
@@ -422,12 +379,8 @@ function Nav() {
         maxWidth: 1180, margin: '0 auto', padding: '0 32px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64,
       }}>
-        <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
-            <circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" strokeWidth="1" />
-            <path d="M6 11 Q 8 7 11 8 Q 14 7 16 11 Q 13 14 11 13 Q 9 14 6 11 Z" fill="currentColor" />
-            <circle cx="13" cy="10" r="0.8" fill="var(--paper)" />
-          </svg>
+        <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--ink)' }}>
+          <MuninMark size={26} />
           <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
             Munin Systems
           </span>
@@ -522,8 +475,8 @@ export default function Home() {
                 <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="btn-ghost">View repository ↗</a>
               </div>
             </div>
-            <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <RavenSigil size={260} />
+            <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', color: 'var(--ink)' }}>
+              <MuninMark size={220} variant="instrument" />
             </div>
           </div>
 
@@ -1048,7 +1001,9 @@ export default function Home() {
             <p className="mono" style={{ fontSize: 12, color: 'var(--ink-2)', letterSpacing: '0.06em', marginBottom: 24 }}>
               FOUNDER · MUNIN SYSTEMS · MILAN
             </p>
-            <RavenSigil size={180} />
+            <div style={{ color: 'var(--ink)' }}>
+              <MuninMark size={160} variant="instrument" />
+            </div>
           </div>
           <div>
             <p className="lede" style={{ marginBottom: 24 }}>
@@ -1124,11 +1079,8 @@ export default function Home() {
           display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48,
         }} className="grid-4-collapse">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
-                <circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" strokeWidth="1" />
-                <path d="M6 11 Q 8 7 11 8 Q 14 7 16 11 Q 13 14 11 13 Q 9 14 6 11 Z" fill="currentColor" />
-              </svg>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, color: 'var(--ink)' }}>
+              <MuninMark size={24} />
               <span style={{ fontWeight: 600, fontSize: 15, color: 'var(--ink)' }}>Munin Systems</span>
             </div>
             <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6, maxWidth: 320 }}>
