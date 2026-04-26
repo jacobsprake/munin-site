@@ -1,13 +1,18 @@
 /* ─────────────────────────────────────────────────────────
    Munin Systems mark — single identity, multi-scale.
-   Geometric M-monogram (rune-form) inside a circle, with a
-   vertical pin piercing the circle and extending below it.
+
+   Construction (viewBox 0 0 100 130):
+   - Circle: centred at (50, 50), radius 42, heavy stroke
+   - M-letterform: two vertical outer legs + inner V meeting
+     at centre-baseline, all feet at y=76
+   - Vertical pin: from M centre-baseline (50, 76) down past
+     the circle bottom (y=92) to y=120
    ───────────────────────────────────────────────────────── */
 
 interface Props {
-  size?: number;          // pixel size of the mark (excluding wordmark)
-  withWordmark?: boolean; // render "MUNIN SYSTEMS" alongside
-  variant?: 'plain' | 'instrument';  // 'instrument' adds heraldic tick marks for large display
+  size?: number;
+  withWordmark?: boolean;
+  variant?: 'plain' | 'instrument';
   color?: string;
   className?: string;
 }
@@ -19,8 +24,9 @@ export default function MuninMark({
   color = 'currentColor',
   className,
 }: Props) {
-  const W = 56;
-  const H = 70;
+  const W = 100;
+  const H = 130;
+  const stroke = variant === 'instrument' ? 5 : 6;
 
   return (
     <span
@@ -37,53 +43,54 @@ export default function MuninMark({
         width={size}
         height={(size * H) / W}
         aria-hidden
-        style={{ flexShrink: 0 }}
+        style={{ flexShrink: 0, overflow: 'visible' }}
       >
         {variant === 'instrument' && (
-          <>
-            {/* Outer guide circle — very faint */}
-            <circle cx="28" cy="28" r="26" fill="none" stroke={color} strokeWidth="0.5" opacity="0.18" />
-            {/* Tick marks at 12 positions around perimeter */}
-            <g stroke={color} strokeWidth="0.6" opacity="0.45">
-              {Array.from({ length: 60 }).map((_, i) => {
-                const a = (i / 60) * Math.PI * 2;
-                const major = i % 5 === 0;
-                const r1 = 24.5;
-                const r2 = major ? 26.2 : 25.4;
-                const x1 = (28 + Math.cos(a) * r1).toFixed(3);
-                const y1 = (28 + Math.sin(a) * r1).toFixed(3);
-                const x2 = (28 + Math.cos(a) * r2).toFixed(3);
-                const y2 = (28 + Math.sin(a) * r2).toFixed(3);
-                return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
-              })}
-            </g>
-          </>
+          <g stroke={color} strokeWidth="0.7" opacity="0.45" fill="none">
+            {Array.from({ length: 60 }).map((_, i) => {
+              const a = (i / 60) * Math.PI * 2;
+              const major = i % 5 === 0;
+              const r1 = 47;
+              const r2 = major ? 50 : 48.5;
+              const x1 = (50 + Math.cos(a) * r1).toFixed(3);
+              const y1 = (50 + Math.sin(a) * r1).toFixed(3);
+              const x2 = (50 + Math.cos(a) * r2).toFixed(3);
+              const y2 = (50 + Math.sin(a) * r2).toFixed(3);
+              return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
+            })}
+          </g>
         )}
 
         {/* Primary circle */}
         <circle
-          cx="28" cy="28" r="22"
+          cx="50"
+          cy="50"
+          r="42"
           fill="none"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 3 : 3.5}
+          strokeWidth={stroke}
         />
 
-        {/* M-monogram: outer legs angle inward, inner V dips below the feet
-            forming the deep central valley that becomes the pin */}
+        {/* M-letterform: vertical outer legs + inner V */}
         <path
-          d="M 18 38 L 14 10 L 28 44 L 42 10 L 38 38"
+          d="M 25 76 L 25 18 L 50 76 L 75 18 L 75 76"
           fill="none"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 3 : 3.5}
+          strokeWidth={stroke}
           strokeLinejoin="miter"
           strokeLinecap="butt"
+          strokeMiterlimit="6"
         />
 
-        {/* Vertical pin — from centre meeting point down through bottom and beyond */}
+        {/* Vertical pin extending past circle bottom */}
         <line
-          x1="28" y1="44" x2="28" y2="64"
+          x1="50"
+          y1="76"
+          x2="50"
+          y2="120"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 3 : 3.5}
+          strokeWidth={stroke}
+          strokeLinecap="butt"
         />
       </svg>
 
