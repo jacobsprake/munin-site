@@ -1,0 +1,14 @@
+# Munin Systems · Vulnerability disclosure
+# RFC 9116 — https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:security@muninsystems.com
+Contact: mailto:jacob@muninsystems.com
+Expires: 2027-04-26T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://muninsystems.com/.well-known/security.txt
+Policy: https://github.com/jacobsprake/munin/blob/main/SECURITY.md
+Acknowledgments: https://github.com/jacobsprake/munin/blob/main/SECURITY.md#acknowledgments
+
+# We respond to good-faith vulnerability reports within 5 working days.
+# Please include reproduction steps and environment details.
+# We do not currently run a paid bug bounty programme.

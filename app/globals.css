@@ -234,7 +234,7 @@ a { color: inherit; text-decoration: none; }
     grid-template-columns: 1fr 1fr;
     gap: 24px 32px;
   }
-  .grid-2-collapse, .grid-3-collapse {
+  .grid-2-collapse, .grid-3-collapse, .grid-5-collapse {
     grid-template-columns: 1fr !important;
   }
   .grid-4-collapse {

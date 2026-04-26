@@ -389,6 +389,7 @@ function Nav() {
           {[
             { label: 'Problem', href: '#problem' },
             { label: 'Platform', href: '#platform' },
+            { label: 'Packet', href: '#packet' },
             { label: 'Demo', href: '#demo' },
             { label: 'Safety', href: '#safety' },
             { label: 'Why now', href: '#why-now' },
@@ -545,6 +546,52 @@ export default function Home() {
               <br />
               Signable, auditable, oversight-centred decisions.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── OPERATOR WORKFLOW · FIVE VERBS ── */}
+      <section style={{ padding: '96px 32px', borderTop: '1px solid var(--rule)' }}>
+        <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+          <div className="frag" style={{ marginBottom: 24 }}>/M.W · OPERATOR WORKFLOW</div>
+          <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 56 }}>
+            Five verbs, in order.
+            <br />
+            <span style={{ color: 'var(--ink-2)' }}>From signal to signed action to evidence pack.</span>
+          </h2>
+
+          <div className="grid-5-collapse" style={{
+            display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
+            borderTop: '1px solid var(--rule)',
+          }}>
+            {[
+              { n: '01', verb: 'See',        desc: 'Cross-sector telemetry surfaces an anomaly. Shadow-link discovery makes the dependency legible.' },
+              { n: '02', verb: 'Understand', desc: 'The cascade engine forecasts which sectors fail next, in what order, on what timescale.' },
+              { n: '03', verb: 'Review',     desc: 'A pre-formed authorisation packet arrives with evidence, predicted impact, and legal basis.' },
+              { n: '04', verb: 'Sign',       desc: 'Named ministries authorise via biometric M-of-N quorum. No single entity can unilaterally act.' },
+              { n: '05', verb: 'Prove',      desc: 'Every recommendation, signature, and override hashes into a tamper-evident audit chain.' },
+            ].map((s, i) => (
+              <div key={s.n} style={{
+                padding: '32px 24px',
+                borderRight: i < 4 ? '1px solid var(--rule)' : 'none',
+                borderBottom: '1px solid var(--rule)',
+                display: 'flex', flexDirection: 'column', gap: 16,
+              }}>
+                <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', letterSpacing: '0.14em' }}>
+                  /{s.n}
+                </span>
+                <span style={{
+                  fontSize: 'clamp(28px, 3vw, 40px)',
+                  fontWeight: 500,
+                  letterSpacing: '-0.025em',
+                  color: 'var(--ink)',
+                  lineHeight: 1,
+                }}>
+                  {s.verb}.
+                </span>
+                <p style={{ fontSize: 13.5, color: 'var(--ink-2)', lineHeight: 1.6 }}>{s.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -766,6 +813,154 @@ export default function Home() {
         />
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           <MultiSigFlow />
+        </div>
+      </Section>
+
+      {/* ── INSIDE THE PACKET (M.5b) ── */}
+      <Section id="packet" frag="M.5b">
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Inside the authorisation packet</div>
+        <h2 className="display-md" style={{ maxWidth: 940, marginBottom: 24 }}>
+          One document. <span className="serif-italic" style={{ color: 'var(--ink-2)' }}>Eight fields.</span> Tamper-evident from generation.
+        </h2>
+        <p className="lede" style={{ maxWidth: 760, marginBottom: 56 }}>
+          Munin&apos;s output is not a dashboard. It is a single signable document — a packet that travels with its evidence,
+          its predicted cascade, the legal basis for the action, and a quorum of named signatories. Every field is
+          deterministic. Every byte is hashed.
+        </p>
+
+        <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 56, alignItems: 'start' }}>
+          {/* Packet document */}
+          <div className="box" style={{ padding: 0, background: 'var(--paper-2)' }}>
+            {/* Packet header */}
+            <div style={{
+              padding: '14px 22px',
+              borderBottom: '1px solid var(--ink)',
+              background: 'var(--paper)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <span className="mono" style={{ fontSize: 11, color: 'var(--ink)', letterSpacing: '0.1em' }}>
+                AUTHORISATION PACKET
+              </span>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--ink-2)', letterSpacing: '0.08em' }}>
+                FORMAT v1 · ED25519 · ADVISORY MODE
+              </span>
+            </div>
+
+            {/* Packet body */}
+            {[
+              { n: '01', label: 'IDENTIFIER',
+                body: <span className="mono" style={{ fontSize: 12, color: 'var(--ink)' }}>MUNIN-PKT-2026-04-26-001</span> },
+              { n: '02', label: 'INCIDENT SUMMARY',
+                body: <>Storm Desmond cascade trigger · Carlisle catchment.<br />Substation A flooded; downstream cross-sector cascade projected.</> },
+              { n: '03', label: 'EVIDENCE BASIS',
+                body: (
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--ink-2)', lineHeight: 1.7 }}>
+                    source · environment.data.gov.uk/flood-monitoring<br />
+                    gauge  · eden_sands_centre  · 1000 readings<br />
+                    confidence 0.971 · lag 300s · stability 0.640
+                  </div>
+                ) },
+              { n: '04', label: 'PREDICTED CASCADE',
+                body: (
+                  <div style={{ fontSize: 12.5, color: 'var(--ink)', lineHeight: 1.85 }}>
+                    <span className="mono" style={{ color: 'var(--signal)' }}>T+0:30</span> · Pump Station 7 — power loss<br />
+                    <span className="mono" style={{ color: 'var(--signal)' }}>T+2:00</span> · Treatment Plant — pressure drop<br />
+                    <span className="mono" style={{ color: 'var(--signal)' }}>T+5:00</span> · Cell Tower 3 — backup battery<br />
+                    <span className="mono" style={{ color: 'var(--signal)' }}>T+15:00</span> · Hospital A — water pressure critical
+                  </div>
+                ) },
+              { n: '05', label: 'RECOMMENDED INTERVENTION',
+                body: <>Activate backup power supply at Pump Station 7. Estimated impact reduction: 4 sectors → 1 sector.</> },
+              { n: '06', label: 'LEGAL BASIS',
+                body: (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {['Flood Risk Act §12.3', 'EA Standing Order 7'].map(r => (
+                      <span key={r} className="mono" style={{
+                        fontSize: 11, padding: '3px 9px',
+                        border: '1px solid var(--rule)', color: 'var(--ink-2)',
+                      }}>{r}</span>
+                    ))}
+                  </div>
+                ) },
+              { n: '07', label: 'SIGNATORIES · QUORUM 2 OF 3',
+                body: (
+                  <div className="mono" style={{ fontSize: 11.5, color: 'var(--ink)', lineHeight: 1.85 }}>
+                    <span style={{ color: 'var(--ok)' }}>✓</span>  EA     · S. Patel    · 13:42:18 UTC · ed25519:7c3a…f019<br />
+                    <span style={{ color: 'var(--ok)' }}>✓</span>  OFGEM  · J. Müller   · 13:43:47 UTC · ed25519:9b41…a8e2<br />
+                    <span style={{ color: 'var(--ink-3)' }}>·</span>  COBR   · pending (advisory)
+                  </div>
+                ) },
+              { n: '08', label: 'INTEGRITY · HASH-CHAINED',
+                body: (
+                  <div className="mono" style={{ fontSize: 11, color: 'var(--ink-2)', lineHeight: 1.7 }}>
+                    prev  sha256:a72f…c83a<br />
+                    curr  sha256:3b9e…d447
+                  </div>
+                ) },
+            ].map((row, i) => (
+              <div key={row.n} style={{
+                display: 'grid',
+                gridTemplateColumns: '52px 1fr',
+                padding: '18px 22px',
+                borderBottom: i < 7 ? '1px solid var(--rule-soft)' : 'none',
+                gap: 16,
+              }}>
+                <div>
+                  <span className="mono" style={{ fontSize: 11, color: 'var(--signal)', fontWeight: 500, letterSpacing: '0.06em' }}>
+                    /{row.n}
+                  </span>
+                </div>
+                <div>
+                  <div className="mono" style={{ fontSize: 9.5, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 6 }}>
+                    {row.label}
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--ink)', lineHeight: 1.55 }}>{row.body}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Annotations */}
+          <div>
+            <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 18, paddingBottom: 12, borderBottom: '1px solid var(--rule)' }}>
+              ANNOTATIONS · WHY EACH FIELD MATTERS
+            </div>
+            {[
+              { n: '01', text: 'Stable cross-agency reference. Cited in audit, post-incident review, and regulator filings.' },
+              { n: '02', text: 'Plain-language summary derived from the cascade engine. Designed to be readable by a non-technical signatory under time pressure.' },
+              { n: '03', text: 'Source data references with reproducible provenance, time windows, and confidence scores. Anyone can re-run the inference.' },
+              { n: '04', text: 'The downstream impact path Munin\'s engine forecasts if no action is taken, with sector-by-sector timing.' },
+              { n: '05', text: 'A pre-validated playbook tied to the predicted cascade. Specific operational steps, not vague guidance.' },
+              { n: '06', text: 'Citation to the specific statute that authorises the action. This is what makes the eventual signature lawful.' },
+              { n: '07', text: 'Named signatories with biometric Ed25519 signatures and timestamped quorum policy. Article 14 by construction.' },
+              { n: '08', text: 'Hash-chained audit anchor. The packet is tamper-evident from the moment it is generated.' },
+            ].map(a => (
+              <div key={a.n} style={{
+                display: 'grid',
+                gridTemplateColumns: '40px 1fr',
+                padding: '14px 0',
+                borderBottom: '1px solid var(--rule-soft)',
+                gap: 12,
+              }}>
+                <span className="mono" style={{ fontSize: 11, color: 'var(--signal)', fontWeight: 500, letterSpacing: '0.06em' }}>
+                  /{a.n}
+                </span>
+                <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6 }}>{a.text}</p>
+              </div>
+            ))}
+
+            <div style={{
+              marginTop: 24, padding: '14px 18px',
+              border: '1px solid var(--ink)', background: 'var(--paper)',
+              fontSize: 12.5, color: 'var(--ink)', lineHeight: 1.55,
+            }}>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--signal)', letterSpacing: '0.12em', display: 'block', marginBottom: 6 }}>
+                THE WHOLE POINT
+              </span>
+              The packet is the product. Everything upstream — the engine, the graph, the playbooks — exists to assemble it.
+              Everything downstream — operator review, ministry signing, audit trail — operates on it.
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -1101,7 +1296,8 @@ export default function Home() {
             <a href={GITHUB} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>GitHub ↗</a>
             <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Doctrine</a>
             <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Roadmap</a>
-            <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block' }}>Security</a>
+            <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Security</a>
+            <a href="/privacy" className="nav-link" style={{ display: 'block' }}>Privacy notice</a>
           </div>
           <div>
             <div className="mono" style={{ fontSize: 10, color: 'var(--ink-3)', letterSpacing: '0.14em', marginBottom: 14 }}>CONTACT</div>
