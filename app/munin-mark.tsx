@@ -65,24 +65,25 @@ export default function MuninMark({
           cx="28" cy="28" r="22"
           fill="none"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 2 : 2.4}
+          strokeWidth={variant === 'instrument' ? 3 : 3.5}
         />
 
-        {/* M-monogram: two inverted V's meeting at centre, with vertical pin */}
+        {/* M-monogram: outer legs angle inward, inner V dips below the feet
+            forming the deep central valley that becomes the pin */}
         <path
-          d="M 13 38 L 19 12 L 28 28 L 37 12 L 43 38"
+          d="M 18 38 L 14 10 L 28 44 L 42 10 L 38 38"
           fill="none"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 2 : 2.4}
+          strokeWidth={variant === 'instrument' ? 3 : 3.5}
           strokeLinejoin="miter"
           strokeLinecap="butt"
         />
 
         {/* Vertical pin — from centre meeting point down through bottom and beyond */}
         <line
-          x1="28" y1="28" x2="28" y2="64"
+          x1="28" y1="44" x2="28" y2="64"
           stroke={color}
-          strokeWidth={variant === 'instrument' ? 2 : 2.4}
+          strokeWidth={variant === 'instrument' ? 3 : 3.5}
         />
       </svg>
 
