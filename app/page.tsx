@@ -181,8 +181,8 @@ function MultiSigFlow() {
 
   const ministries = [
     { name: 'Environment Agency', code: 'EA' },
-    { name: 'Energy Authority', code: 'OFGEM' },
-    { name: 'Civil Protection', code: 'COBR' },
+    { name: 'National Energy System Operator', code: 'NESO' },
+    { name: 'Cabinet Office · Civil Contingencies Sec.', code: 'CCS' },
   ];
 
   return (
@@ -456,7 +456,7 @@ export default function Home() {
               fontWeight: 400, letterSpacing: 0,
               lineHeight: 1.2, maxWidth: 320, alignSelf: 'flex-end', paddingBottom: 18,
             }}>
-              the bottleneck no one is naming.
+              the latency every post-incident review names.
             </span>
           </h1>
 
@@ -466,10 +466,10 @@ export default function Home() {
           }}>
             <div>
               <p className="lede" style={{ maxWidth: 520 }}>
-                We do not sell better awareness. We sell <em className="serif-italic" style={{ color: 'var(--ink)' }}>faster lawful action</em> under regulatory constraints —
-                cryptographically-signed multi-party authorisation packets that compress crisis decisions from
-                two-to-six hours to under thirty minutes, with the audit trail CER, NIS2 and AI Act Article 14
-                require by default.
+                We do not sell better awareness. We sell <em className="serif-italic" style={{ color: 'var(--ink)' }}>faster lawful action</em> —
+                cryptographically-signed multi-party authorisation packets that compress the crisis-decision path
+                from 2-6 hours to under 30 minutes, with the audit trail CER Article 15(3),
+                NIS2 Article 23(4) and AI Act Article 14(4) require by default.
               </p>
               <div style={{ display: 'flex', gap: 12, marginTop: 32, flexWrap: 'wrap' }}>
                 <a href={CONTACT} className="btn-primary">Request a briefing</a>
@@ -499,8 +499,8 @@ export default function Home() {
         }}>
           {[
             { v: <><Counter end={85} suffix="%" /></>, label: 'Faster authorisation', sub: '2-6 hours → 20-30 minutes' },
-            { v: <Counter end={38} />, label: 'Scenarios end-to-end', sub: 'Validated under 5 seconds' },
-            { v: '0.971', label: 'Real-data confidence', sub: 'EA Carlisle catchment' },
+            { v: <Counter end={38} />, label: 'Scenarios end-to-end', sub: 'Pipeline runtime under 5 s on a laptop' },
+            { v: '0.971', label: 'Layer-1 inference confidence', sub: '1 000-reading window · EA Carlisle' },
             { v: 'Ed25519', label: 'Production signing', sub: 'PQC dual-stack roadmap' },
           ].map((s, i) => (
             <div key={i} style={{
@@ -544,7 +544,7 @@ export default function Home() {
             <p className="display-md" style={{ fontSize: 'clamp(22px, 2.4vw, 30px)', fontWeight: 500, color: 'var(--ink)' }}>
               Faster lawful <em className="serif-italic" style={{ color: 'var(--signal)' }}>action</em>.
               <br />
-              Signable, auditable, oversight-centred decisions.
+              Signable, auditable, advisory-mode decisions.
             </p>
           </div>
         </div>
@@ -568,7 +568,7 @@ export default function Home() {
               { n: '01', verb: 'See',        desc: 'Cross-sector telemetry surfaces an anomaly. Shadow-link discovery makes the dependency legible.' },
               { n: '02', verb: 'Understand', desc: 'The cascade engine forecasts which sectors fail next, in what order, on what timescale.' },
               { n: '03', verb: 'Review',     desc: 'A pre-formed authorisation packet arrives with evidence, predicted impact, and legal basis.' },
-              { n: '04', verb: 'Sign',       desc: 'Named ministries authorise via biometric M-of-N quorum. No single entity can unilaterally act.' },
+              { n: '04', verb: 'Sign',       desc: 'Named ministries authorise via M-of-N quorum, gated on each signatory\'s hardware-token Ed25519 key.' },
               { n: '05', verb: 'Prove',      desc: 'Every recommendation, signature, and override hashes into a tamper-evident audit chain.' },
             ].map((s, i) => (
               <div key={s.n} style={{
@@ -600,10 +600,10 @@ export default function Home() {
       <Section id="problem" frag="M.1">
         <SpecHeader
           eyebrow="The authorisation latency problem"
-          title="Cascades move in minutes. Cross-agency authorisation moves in hours. The gap is where civilians die."
+          title="Cascades move in minutes. Cross-agency authorisation moves in hours. The gap is named in every post-incident review on the page below."
           builtOn={['Detection', 'Coordination', 'Authority']}
           scope="EU + UK critical infrastructure"
-          status="Documented in every major post-incident review since 2005"
+          status="Documented from the Pitt Review (2008) to the ENTSO-E Iberian Expert Panel (2026)"
         />
 
         <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
@@ -673,16 +673,16 @@ export default function Home() {
               detail: '47 million people lost power when Spain and Portugal\'s grids collapsed in under 90 seconds. The ENTSO-E Expert Panel\'s final report (March 2026) attributed the collapse to "institutional rather than technical" failures — "governance fragmentation [that] impeded coordinated crisis response."',
               source: 'ENTSO-E Expert Panel, 20 March 2026' },
             { name: 'Hurricane Helene', year: '2024', delay: 'Comms collapse',
-              detail: 'Hurricane Helene destroyed North Carolina\'s public-safety communications network in a single afternoon. The state\'s after-action review cites interoperability failures and unclear cross-agency roles as the primary delay drivers.',
+              detail: 'Hurricane Helene took North Carolina\'s public-safety communications network offline within hours of landfall. The state\'s after-action review cites interoperability failures and unclear cross-agency roles as the primary delay drivers.',
               source: 'NC DPS After-Action Review, 2025' },
             { name: 'Hurricane Katrina', year: '2005', delay: '37 days',
               detail: 'FEMA, state, and Red Cross operated in parallel without coordination. Meals took 37 days to reach some areas. The Select Bipartisan Committee found "the single most important failure was coordination."',
               source: 'Select Bipartisan Committee Report, 2006' },
             { name: 'Fukushima Daiichi', year: '2011', delay: '7+ hours',
-              detail: 'Reactor venting was delayed seven hours while operators, TEPCO management, and the Prime Minister\'s office argued over authorisation. Evacuation was uncoordinated across jurisdictions.',
+              detail: 'Reactor venting was delayed seven hours while operators, TEPCO management, and the Prime Minister\'s office negotiated authorisation across three levels of decision authority. Evacuation was uncoordinated across jurisdictions.',
               source: 'NAIIC Report to the Japanese Diet, 2012' },
             { name: 'UK Summer Floods', year: '2007', delay: '3-5 hours',
-              detail: 'Cross-government coordination took 3-5 hours per decision. The Pitt Review recommended "a single framework for multi-agency response" — which still does not exist.',
+              detail: 'Cross-government coordination took 3-5 hours per decision. The Pitt Review recommended "a single framework for multi-agency response" — partially implemented through Local Resilience Forums, but no national cross-sector authorisation layer exists.',
               source: 'The Pitt Review, Cabinet Office, 2008' },
             { name: 'Storm Desmond · Carlisle', year: '2015', delay: '2-6 hours',
               detail: 'Power substation flooded → water pumps failed → treatment offline → hospitals on emergency supply. Each agency responded independently. Cross-sector cascade was not predicted.',
@@ -757,7 +757,7 @@ export default function Home() {
       <Section id="cascade" frag="M.4">
         <div className="eyebrow" style={{ marginBottom: 18 }}>Cascade prediction</div>
         <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 56 }}>
-          See the failure propagate before it happens.
+          Project the cascade trajectory in advance.
         </h2>
 
         <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }}>
@@ -780,7 +780,7 @@ export default function Home() {
                 Estimated impact reduction: 4 sectors → 1 sector.
               </p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {['Flood Risk Act §12.3', 'EA Standing Order 7'].map(r => (
+                {['Flood and Water Management Act 2010, s.39', 'EA Standing Order 7'].map(r => (
                   <span key={r} className="mono" style={{
                     fontSize: 11, padding: '4px 10px',
                     border: '1px solid var(--rule)', color: 'var(--ink-2)',
@@ -805,11 +805,11 @@ export default function Home() {
       {/* ── MULTI-SIG (M.5) ── */}
       <Section id="authorization" frag="M.5">
         <SpecHeader
-          eyebrow="Byzantine multi-ministry approval"
-          title="No single entity can unilaterally authorise a dangerous action."
+          eyebrow="M-of-N quorum approval"
+          title="No single entity can unilaterally authorise an action with cross-sector consequences."
           builtOn={['Ed25519', 'M-of-N quorum', 'Hash-chained audit']}
           scope="Cross-jurisdictional sign-off"
-          status="Production cryptography · ML-DSA roadmap"
+          status="Ed25519 in production · FIPS 204 / ML-DSA dual-stack on roadmap"
         />
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           <MultiSigFlow />
@@ -874,7 +874,7 @@ export default function Home() {
               { n: '06', label: 'LEGAL BASIS',
                 body: (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {['Flood Risk Act §12.3', 'EA Standing Order 7'].map(r => (
+                    {['Flood and Water Management Act 2010, s.39', 'EA Standing Order 7'].map(r => (
                       <span key={r} className="mono" style={{
                         fontSize: 11, padding: '3px 9px',
                         border: '1px solid var(--rule)', color: 'var(--ink-2)',
@@ -885,9 +885,9 @@ export default function Home() {
               { n: '07', label: 'SIGNATORIES · QUORUM 2 OF 3',
                 body: (
                   <div className="mono" style={{ fontSize: 11.5, color: 'var(--ink)', lineHeight: 1.85 }}>
-                    <span style={{ color: 'var(--ok)' }}>✓</span>  EA     · S. Patel    · 13:42:18 UTC · ed25519:7c3a…f019<br />
-                    <span style={{ color: 'var(--ok)' }}>✓</span>  OFGEM  · J. Müller   · 13:43:47 UTC · ed25519:9b41…a8e2<br />
-                    <span style={{ color: 'var(--ink-3)' }}>·</span>  COBR   · pending (advisory)
+                    <span style={{ color: 'var(--ok)' }}>✓</span>  EA    · S. Patel    · 13:42:18 UTC · ed25519:7c3a…f019<br />
+                    <span style={{ color: 'var(--ok)' }}>✓</span>  NESO  · J. Müller   · 13:43:47 UTC · ed25519:9b41…a8e2<br />
+                    <span style={{ color: 'var(--ink-3)' }}>·</span>  CCS   · pending (advisory)
                   </div>
                 ) },
               { n: '08', label: 'INTEGRITY · HASH-CHAINED',
@@ -932,7 +932,7 @@ export default function Home() {
               { n: '04', text: 'The downstream impact path Munin\'s engine forecasts if no action is taken, with sector-by-sector timing.' },
               { n: '05', text: 'A pre-validated playbook tied to the predicted cascade. Specific operational steps, not vague guidance.' },
               { n: '06', text: 'Citation to the specific statute that authorises the action. This is what makes the eventual signature lawful.' },
-              { n: '07', text: 'Named signatories with biometric Ed25519 signatures and timestamped quorum policy. Article 14 by construction.' },
+              { n: '07', text: 'Named signatories with biometric Ed25519 signatures and timestamped quorum policy. AI Act Article 14(2) by construction.' },
               { n: '08', text: 'Hash-chained audit anchor. The packet is tamper-evident from the moment it is generated.' },
             ].map(a => (
               <div key={a.n} style={{
@@ -968,10 +968,10 @@ export default function Home() {
       <Section id="demo" frag="M.6" dark>
         <div className="eyebrow" style={{ marginBottom: 18, color: '#A8A6A0' }}>Live demo · real Environment Agency data</div>
         <h2 className="display-md" style={{ maxWidth: 920, marginBottom: 36, color: '#ECEAE4' }}>
-          Real data. Real results.
+          EA Carlisle catchment, live.
         </h2>
         <p className="lede" style={{ maxWidth: 720, marginBottom: 48, color: '#BFBCB3' }}>
-          Running on actual Environment Agency river-gauge data from the Carlisle catchment. No synthetic data.
+          Running on Environment Agency river-gauge telemetry from the Carlisle catchment. No synthetic data.
           No simulation. Munin discovered the known hydrological relationship between the River Eden and River Petteril
           — the 5-minute lag matches physical rainfall travel time.
         </p>
@@ -989,16 +989,16 @@ export default function Home() {
         <SpecHeader
           eyebrow="Safety-first architecture"
           title="Read-only v1. Humans always decide."
-          builtOn={['WRITE_ACCESS=false', 'Data-diode ingress', 'STPA hazard analysis']}
+          builtOn={['WRITE_ACCESS=false', 'Data-diode ingress', 'STPA-Sec hazard analysis']}
           scope="Advisory mode only — no SCADA writes"
-          status="EU AI Act Article 14 compliant from first principles"
+          status="EU AI Act Article 14(1)-(2) compliant from first principles"
         />
         <div className="grid-2-collapse" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
           {[
             { title: 'WRITE_ACCESS = false', desc: 'Runtime read-only guard. CI static analysis scans every engine file for socket / HTTP writes to SCADA ports.', tag: 'Enforced' },
             { title: 'Data-diode architecture', desc: 'Ingestion is strictly one-way. Any attempt to open an outbound socket from the analysis enclave fails tests.', tag: 'Tested' },
             { title: 'Structured safety case', desc: 'GSN-style claims → evidence mapping. STPA hazard analysis with 17 unsafe control actions identified and mitigated.', tag: 'Documented' },
-            { title: 'NIST 800-82 + IEC 62443', desc: 'Architecture mapped to OT security standards. Zones, conduits, security levels and foundational requirements traced to code.', tag: 'Compliant' },
+            { title: 'NIST 800-82 r3 · IEC 62443-3-3', desc: 'Architecture mapped to OT security standards. Zones, conduits, security levels and foundational requirements traced to code.', tag: 'Compliant' },
           ].map((c, i) => (
             <div key={c.title} style={{
               padding: '32px 28px',
@@ -1028,8 +1028,8 @@ export default function Home() {
             EU AI ACT · ARTICLE 14 · LEGAL REQUIREMENT FROM 2 AUGUST 2026
           </div>
           <p style={{ fontSize: 17, lineHeight: 1.55, color: 'var(--ink)', maxWidth: 880 }}>
-            Munin&apos;s advisory-mode architecture — humans authorise, never systems — is not a marketing reassurance.
-            Under the EU AI Act, human-in-the-loop is a <em className="serif-italic">legal requirement</em> for high-risk
+            Munin&apos;s advisory-mode architecture — humans authorise, never systems — is not a posture choice.
+            Under the EU AI Act, human oversight is a <em className="serif-italic">legal requirement</em> for high-risk
             AI systems. Autonomous-execution platforms must retrofit oversight scaffolding or exit the high-risk category.
             Munin is architecturally compliant from first principles.
           </p>
@@ -1066,10 +1066,9 @@ export default function Home() {
 
         <p className="lede" style={{ marginTop: 48, maxWidth: 880 }}>
           Eight-stage pipeline — ingest → graph inference → sensor health → anomaly detection → incident build →
-          cascade prediction → authorisation packets → governance audit. Seven-layer intelligence stack including
-          physics-informed neural ODE (RK4), GNN message passing, ensemble Kalman filter, differential privacy with
-          Rényi accounting. Layer 1 validated on live UK Environment Agency data; layers 2-7 on synthetic data
-          pending pilot telemetry.
+          cascade prediction → authorisation packets → governance audit. Seven-layer inference stack: physics-informed
+          neural ODE, GNN message passing, ensemble Kalman filter, Rényi differential privacy. Layer 1 validated on
+          live UK Environment Agency data; layers 2-7 on synthetic data pending pilot telemetry.
         </p>
 
         <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -1085,10 +1084,10 @@ export default function Home() {
             PILOT STATUS · HONEST LINE
           </div>
           <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65 }}>
-            No named customer yet. First wedge: <strong style={{ color: 'var(--ink)' }}>one sector pair</strong>{' '}
+            No named customer yet. First engagement: <strong style={{ color: 'var(--ink)' }}>one sector pair</strong>{' '}
             (power + water, or flood + grid), one designated entity, 90-day shadow-mode evaluation.
-            Exit deliverable is a <strong style={{ color: 'var(--ink)' }}>compliance &amp; response evidence pack</strong>{' '}
-            mapped directly to CER, NIS2 Article 23 and AI Act Article 14 obligations — not a platform transformation.
+            Exit deliverable is a <strong style={{ color: 'var(--ink)' }}>compliance and response evidence pack</strong>{' '}
+            mapped directly to CER Article 15(3), NIS2 Article 23(4) and AI Act Article 14(4) obligations — not a platform transformation.
             Open to introductions —{' '}
             <a href={CONTACT} style={{ color: 'var(--ink)', borderBottom: '1px solid var(--ink)' }}>jacob@muninsystems.com</a>.
           </p>
@@ -1105,17 +1104,17 @@ export default function Home() {
         <div className="grid-3-collapse" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
           {[
             { title: 'Iberian blackout', date: '28 April 2025',
-              desc: '47 million people dark. ENTSO-E\'s final expert panel: the cascade "unfolded faster than human operators could respond" due to "governance fragmentation." Munin\'s thesis delivered verbatim by 49 regulators.' },
+              desc: '47 million customers off-supply. ENTSO-E\'s final expert panel: the cascade "unfolded faster than human operators could respond" due to "governance fragmentation." The panel identified governance fragmentation as a primary contributor — among the technical and procedural drivers of the cascade.' },
             { title: 'EU CER directive — designation deadline', date: '17 July 2026',
               desc: 'All 27 member states must designate critical entities. ~3,000 entities into scope. Cross-sector risk assessment becomes a legal requirement. Resilience obligations apply 10 months post-designation.' },
             { title: 'NIS2 — board-level personal liability', date: 'Article 20 · in force',
-              desc: 'Article 20 makes management bodies personally accountable for cybersecurity risk-management measures. Article 23 forces 24-hour and 72-hour incident reporting. Fines to €10M or 2% of global turnover. Personal liability is what actually drives procurement timing — not the fines.' },
+              desc: 'Article 20(1) makes management bodies personally accountable for cybersecurity risk-management measures. Article 23(4) sets the 24-hour early-warning, 72-hour incident-notification and one-month final-report cadence. Fines to €10M or 2% of global turnover. Personal liability is what actually drives procurement timing — not the fines.' },
             { title: 'EU AI Act · Article 14', date: '2 August 2026',
-              desc: 'Human-in-the-loop is now a legal requirement for high-risk AI systems. Munin\'s "humans still decide" architecture is the compliance posture the regulation mandates.' },
+              desc: 'Article 14(1)-(2) makes human oversight a legal requirement for high-risk AI systems. Munin\'s "humans authorise, never systems" architecture is the compliance posture the regulation mandates.' },
             { title: 'European sovereignty momentum', date: 'Nov 2025 →',
-              desc: 'Franco-German sovereignty summit. €180M Commission sovereign cloud tender. ~90% of European digital infrastructure foreign-controlled. European-origin critical-infrastructure software has unprecedented political tailwind.' },
+              desc: 'Franco-German sovereignty summit. €180M Commission sovereign cloud tender. ~90% of European digital infrastructure foreign-controlled. European-origin critical-infrastructure software has the strongest procurement tailwind in a decade.' },
             { title: 'Post-quantum transition', date: 'FIPS 204 · CNSA 2.0',
-              desc: 'NIST FIPS 204 finalised August 2024. CNSA 2.0 mandates pure PQC by 2035. Munin is PQC-native by design.' },
+              desc: 'NIST FIPS 204 finalised August 2024. CNSA 2.0 mandates pure PQC by 2035. Munin\'s signature stack is dual-stack-ready: Ed25519 in production today, ML-DSA on roadmap before any classical-signature deprecation deadline.' },
           ].map((f, i) => (
             <article key={f.title} style={{
               padding: '32px 28px',
@@ -1160,7 +1159,7 @@ export default function Home() {
             { title: "What's Next", desc: 'Concrete roadmap, what needs funding', href: 'WHATS_NEXT.md' },
             { title: 'Limitations', desc: 'Honest gaps and how we attack them', href: 'LIMITATIONS.md' },
             { title: 'Founder Notes', desc: 'Background, motivation, trajectory', href: 'FOUNDER_NOTES.md' },
-            { title: 'Governance', desc: 'Byzantine multi-sig, quorum policies', href: 'GOVERNANCE.md' },
+            { title: 'Governance', desc: 'M-of-N threshold signing, quorum policies', href: 'GOVERNANCE.md' },
             { title: 'Ministry Integration', desc: 'How Munin fits into government', href: 'MINISTRY_INTEGRATION.md' },
             { title: 'Operator Handbook', desc: 'Step-by-step for field operators', href: 'OPERATOR_HANDBOOK.md' },
           ].map((d, i) => {
@@ -1281,7 +1280,7 @@ export default function Home() {
             <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.6, maxWidth: 320 }}>
               Named for the raven in Norse mythology who flies across the world and reports back what he sees.
               <br />
-              <em className="serif-italic" style={{ color: 'var(--ink)' }}>Munin sees. Humans decide.</em>
+              <em className="serif-italic" style={{ color: 'var(--ink)' }}>Munin sees. Humans authorise.</em>
             </p>
           </div>
           <div>

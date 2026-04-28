@@ -4,10 +4,10 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Munin Systems — Sovereign Orchestration for Critical Infrastructure',
-  description: 'Decision support for critical infrastructure operators. Discovers cross-sector dependencies invisible to existing systems. Compresses crisis authorisation from hours to minutes. EU AI Act Article 14 compliant.',
+  description: 'Decision support for critical-infrastructure operators. Surfaces cross-sector dependencies invisible to existing systems. Takes crisis authorisation from hours to minutes. EU AI Act Article 14(4) compliant.',
   openGraph: {
     title: 'Munin Systems — Sovereign Orchestration for Critical Infrastructure',
-    description: 'Decision support for critical infrastructure operators. Discovers cross-sector dependencies invisible to existing systems. Compresses crisis authorisation from hours to minutes.',
+    description: 'Decision support for critical-infrastructure operators. Surfaces cross-sector dependencies invisible to existing systems. Takes crisis authorisation from hours to minutes.',
     type: 'website',
     siteName: 'Munin Systems',
     url: 'https://muninsystems.com',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Munin Systems — Sovereign Orchestration for Critical Infrastructure',
-    description: 'Discovers cross-sector infrastructure dependencies. Compresses crisis authorisation from hours to minutes.',
+    description: 'Surfaces cross-sector infrastructure dependencies. Takes crisis authorisation from hours to minutes.',
   },
   robots: 'index, follow',
 }

@@ -346,8 +346,8 @@ export default function GlobalSignal() {
             <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--rule)' }}>
               <div style={{ fontSize: 9.5, color: 'var(--ink-3)', letterSpacing: '0.06em', lineHeight: 1.6 }}>
                 SOURCES · USGS · NASA EONET · UK ENVIRONMENT AGENCY · NOAA SWPC.
-                Visual demonstration of the cross-sector cascade-trigger universe.
-                Munin&apos;s production telemetry is operator-supplied.
+                Visual demonstration of the event-class universe Munin&apos;s playbooks address.
+                Munin&apos;s production telemetry is operator-supplied (SCADA, sensor networks, ministry feeds).
               </div>
             </div>
           </div>

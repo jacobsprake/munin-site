@@ -60,7 +60,7 @@ export default async function Image() {
           fontFamily: 'monospace',
         }}>
           <div>MUNINSYSTEMS.COM</div>
-          <div>SOVEREIGN ORCHESTRATION FOR CRITICAL INFRASTRUCTURE</div>
+          <div>CROSS-SECTOR AUTHORISATION INFRASTRUCTURE</div>
         </div>
       </div>
     ),

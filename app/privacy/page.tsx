@@ -91,7 +91,8 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
       <>
         Vercel and Squarespace are US-based. Where personal data leaves the UK or EEA, transfers are governed by the
         UK&apos;s International Data Transfer Addendum and the EU Standard Contractual Clauses respectively. Munin
-        Systems&apos; <em>product</em> is sovereign-by-design and runs on operator infrastructure — the foreign-cloud
+        Systems&apos; <em>product</em> is deployed jurisdiction-resident on operator infrastructure (typically on-prem
+        or in a sovereign cloud region within the operator&apos;s data-residency boundary) — the foreign-cloud
         dependencies on this site are limited to public marketing content.
       </>
     ),

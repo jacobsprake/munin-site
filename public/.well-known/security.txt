@@ -9,6 +9,7 @@ Canonical: https://muninsystems.com/.well-known/security.txt
 Policy: https://github.com/jacobsprake/munin/blob/main/SECURITY.md
 Acknowledgments: https://github.com/jacobsprake/munin/blob/main/SECURITY.md#acknowledgments
 
-# We respond to good-faith vulnerability reports within 5 working days.
+# We respond to vulnerability reports within 5 working days.
+# Good-faith research is welcome under safe-harbour terms; see the linked policy.
 # Please include reproduction steps and environment details.
 # We do not currently run a paid bug bounty programme.
