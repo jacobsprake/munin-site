@@ -1090,6 +1090,10 @@ export default function Home() {
             mapped directly to CER Article 15(3), NIS2 Article 23(4) and AI Act Article 14(4) obligations — not a platform transformation.
             Open to introductions —{' '}
             <a href={CONTACT} style={{ color: 'var(--ink)', borderBottom: '1px solid var(--ink)' }}>jacob@muninsystems.com</a>.
+            <br /><br />
+            Every claim above is mapped to one of four chips — <strong style={{ color: 'var(--ink)' }}>LIVE / DEMO / ROADMAP / VISION</strong> — on{' '}
+            <a href="/maturity" style={{ color: 'var(--ink)', borderBottom: '1px solid var(--ink)' }}>the maturity declaration</a>.
+            The line is published so it cannot be blurred.
           </p>
         </div>
       </Section>
@@ -1296,6 +1300,7 @@ export default function Home() {
             <a href={DOCS('MUNIN_DOCTRINE.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Doctrine</a>
             <a href={DOCS('WHATS_NEXT.md')} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Roadmap</a>
             <a href={`${GITHUB}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Security</a>
+            <a href="/maturity" className="nav-link" style={{ display: 'block', marginBottom: 8 }}>Maturity declaration</a>
             <a href="/privacy" className="nav-link" style={{ display: 'block' }}>Privacy notice</a>
           </div>
           <div>
